@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{team.team}, ~{::#content})}">
+<body>
+<div id="content" th:with="team=${details.team}, stats=${details.statistics}">
+    <div class="page-header">
+        <div class="d-flex align-items-center gap-3">
+            <img th:replace="~{fragments :: flag(${team}, 'flag-lg')}">
+            <div>
+                <h1 th:text="${team.teamName}"></h1>
+                <div class="text-secondary" th:text="${team.countryName} + ' · ' + #{${team.confederation.messageKey}}"></div>
+            </div>
+        </div>
+        <div class="actions">
+            <a class="btn btn-outline-secondary" th:href="@{/teams/{id}/edit(id=${team.id})}"><i class="bi bi-pencil"></i> <span th:text="#{common.edit}"></span></a>
+            <form th:action="@{/teams/{id}/delete(id=${team.id})}" method="post"
+                  th:data-confirm="#{team.confirmDelete(${team.teamName})}">
+                <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> <span th:text="#{common.delete}"></span></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-lg-5">
+            <section class="panel h-100">
+                <div class="panel-header"><h2 th:text="#{team.basicInfo}"></h2></div>
+                <div class="panel-body">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <img class="avatar avatar-lg-coach" th:alt="${team.coach}"
+                             th:src="${team.coachPhotoFileName != null} ? @{/teams/{id}/coach-photo(id=${team.id})} : @{/img/coach-avatar.svg}">
+                        <div>
+                            <div class="stat-label" th:text="#{team.coach}"></div>
+                            <div class="fs-5 fw-bold" th:text="${team.coach}"></div>
+                            <a class="small" th:href="@{/teams/{id}/edit(id=${team.id})}" th:text="${team.coachPhotoFileName != null} ? #{team.changeCoachPhoto} : #{team.addCoachPhoto}"></a>
+                        </div>
+                    </div>
+                    <dl class="row mb-0">
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{team.founded}"></dt><dd class="col-7" th:text="${team.foundedYear}"></dd>
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{nav.players}"></dt><dd class="col-7" th:text="${stats.playerCount} + '/' + ${maxPlayers}"></dd>
+                    </dl>
+                    <p class="mb-0 mt-2" style="white-space: pre-line" th:if="${team.description}" th:text="${team.description}"></p>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-7">
+            <section class="panel h-100">
+                <div class="panel-header"><h2 th:text="#{team.performance}"></h2></div>
+                <div class="panel-body">
+                    <div class="row g-3 text-center">
+                        <div class="col-4 col-sm-2"><div class="stat-value" th:text="${stats.played}"></div><div class="stat-label" th:text="#{stats.matchesShort}"></div></div>
+                        <div class="col-4 col-sm-2"><div class="stat-value" th:text="${stats.wins}"></div><div class="stat-label" th:text="#{stats.wins}"></div></div>
+                        <div class="col-4 col-sm-2"><div class="stat-value" th:text="${stats.draws}"></div><div class="stat-label" th:text="#{stats.drawsShort}"></div></div>
+                        <div class="col-4 col-sm-2"><div class="stat-value" th:text="${stats.losses}"></div><div class="stat-label" th:text="#{stats.losses}"></div></div>
+                        <div class="col-4 col-sm-2"><div class="stat-value" th:text="${stats.goalsFor} + ':' + ${stats.goalsAgainst}"></div><div class="stat-label" th:text="#{stats.goalsShort}"></div></div>
+                        <div class="col-4 col-sm-2"><div class="stat-value" th:text="${stats.points()}"></div><div class="stat-label" th:text="#{stats.points}"></div></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <section class="panel mb-4">
+        <div class="panel-header">
+            <h2>
+                <i class="bi bi-people-fill me-1"></i> <span th:text="#{nav.players}"></span>
+                <span class="badge ms-1" id="squadCount" th:classappend="${stats.playerCount < maxPlayers} ? 'text-bg-secondary' : 'text-bg-warning'"
+                      th:text="${stats.playerCount} + '/' + ${maxPlayers}"></span>
+            </h2>
+            <a class="btn btn-primary btn-sm" th:if="${stats.playerCount < maxPlayers}"
+               th:href="@{/teams/{id}/players/new(id=${team.id})}"><i class="bi bi-plus-lg"></i> <span th:text="#{player.add}"></span></a>
+            <span class="d-flex align-items-center gap-2" th:unless="${stats.playerCount < maxPlayers}">
+                <span class="small text-warning" th:text="#{error.player.limit(${maxPlayers})}"></span>
+                <button type="button" class="btn btn-primary btn-sm" disabled><i class="bi bi-plus-lg"></i> <span th:text="#{player.add}"></span></button>
+            </span>
+        </div>
+        <div th:if="${#lists.isEmpty(details.players)}" class="empty-state">
+            <i class="bi bi-person-plus"></i> <span th:text="#{team.noPlayers}"></span>
+        </div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(details.players)}">
+            <table class="table table-hover">
+                <thead><tr><th th:text="#{player.numberShort}"></th><th th:text="#{player.player}"></th><th th:text="#{player.position}"></th><th th:text="#{player.age}"></th><th th:text="#{player.club}"></th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${details.players}">
+                    <td><span class="jersey" th:text="${p.jerseyNumber}"></span></td>
+                    <td><a th:href="@{/players/{id}(id=${p.id})}" th:text="${p.fullName}"></a></td>
+                    <td th:text="#{${p.position.messageKey}}"></td>
+                    <td th:text="${p.age}"></td>
+                    <td th:text="${p.club} ?: '-'"></td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/players/{id}/edit(id=${p.id})}"
+                               th:title="#{common.edit}" th:aria-label="#{common.edit}"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/players/{id}/delete(id=${p.id})}" method="post"
+                                  th:data-confirm="#{player.confirmDelete(${p.fullName})}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" th:title="#{common.delete}" th:aria-label="#{common.delete}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel mb-4">
+        <div class="panel-header">
+            <h2><i class="bi bi-building-fill me-1"></i> <span th:text="#{nav.stadiums}"></span></h2>
+            <a class="btn btn-primary btn-sm" th:href="@{/stadiums/new(teamId=${team.id})}"><i class="bi bi-plus-lg"></i> <span th:text="#{stadium.new}"></span></a>
+        </div>
+        <div th:if="${#lists.isEmpty(details.stadiums)}" class="empty-state">
+            <i class="bi bi-building"></i> <span th:text="#{stadium.teamHasNone}"></span>
+        </div>
+        <div class="panel-body" th:unless="${#lists.isEmpty(details.stadiums)}">
+            <div class="row g-3">
+                <div class="col-sm-6 col-xl-4" th:each="s : ${details.stadiums}">
+                    <div th:replace="~{fragments :: stadiumCard(${s})}"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header"><h2><i class="bi bi-calendar-event-fill me-1"></i> <span th:text="#{nav.matches}"></span></h2></div>
+        <div th:replace="~{fragments :: matchTable(${details.matches}, #{team.noMatches})}"></div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="#{error.title} + ' | National Team Manager'"></title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="auth-page">
+    <div class="auth-card text-center">
+        <div class="stat-value mb-2" style="font-size: 3rem" th:text="${status} ?: #{error.title}"></div>
+        <p class="text-secondary" th:switch="${status}">
+            <span th:case="403" th:text="${adminOnly != null} ? ${message} : #{error.forbidden}"></span>
+            <span th:case="404" th:text="${!#strings.isEmpty(message) and message != 'No message available'} ? ${message} : #{error.page.notFound}"></span>
+            <span th:case="*" th:text="${!#strings.isEmpty(message) and message != 'No message available'} ? ${message} : #{error.unexpected}"></span>
+        </p>
+        <a class="btn btn-primary" th:href="@{/dashboard}"><i class="bi bi-house-fill"></i> <span th:text="#{error.backToDashboard}"></span></a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Coach">
+  <rect width="64" height="64" fill="#1a2c49"/>
+  <circle cx="32" cy="23" r="11" fill="#93a4bd"/>
+  <path d="M12 64c0-16 8-25 20-25s20 9 20 25z" fill="#93a4bd"/>
+  <path d="M27 39l5 8 5-8 3 1-6 16h-4l-6-16z" fill="#1a2c49"/>
+</svg>

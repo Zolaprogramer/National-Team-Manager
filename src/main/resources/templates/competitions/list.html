@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{nav.competitions}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="#{nav.competitions}"></h1>
+        <a class="btn btn-primary" th:href="@{/competitions/new}"><i class="bi bi-plus-lg"></i> <span th:text="#{competition.new}"></span></a>
+    </div>
+
+    <section class="panel" th:if="${#lists.isEmpty(competitions)}">
+        <div class="empty-state">
+            <i class="bi bi-award"></i> <span th:text="#{competition.emptyHint}"></span>
+        </div>
+    </section>
+
+    <div class="row g-3" th:unless="${#lists.isEmpty(competitions)}">
+        <div class="col-sm-6 col-xl-4" th:each="c : ${competitions}">
+            <article class="panel competition-card h-100" th:with="canManage=${!c.shared or currentUser.admin}">
+                <a class="competition-card-logo" th:href="@{/competitions/{id}(id=${c.id})}">
+                    <img th:replace="~{fragments :: competitionLogo(${c}, 'competition-logo-xl')}">
+                </a>
+                <div class="panel-body">
+                    <div class="d-flex align-items-start justify-content-between gap-2">
+                        <h2 class="h6 mb-1"><a class="text-reset text-decoration-none" th:href="@{/competitions/{id}(id=${c.id})}" th:text="${c.name}"></a></h2>
+                        <span class="badge text-bg-info" th:if="${c.shared}" th:text="#{competition.official}"></span>
+                    </div>
+                    <div class="small text-secondary" th:text="#{${c.type.messageKey}} + ' · ' + ${c.season}"></div>
+                    <div class="small text-secondary mb-2"
+                         th:text="${#temporals.format(c.startDate, #messages.msg('format.date'))} + ' - ' + ${#temporals.format(c.endDate, #messages.msg('format.date'))}"></div>
+                    <div class="actions justify-content-start" th:if="${canManage}">
+                        <a class="btn btn-sm btn-outline-secondary" th:href="@{/competitions/{id}/edit(id=${c.id})}"
+                           th:title="#{common.edit}" th:aria-label="#{common.edit}"><i class="bi bi-pencil"></i></a>
+                        <form th:action="@{/competitions/{id}/delete(id=${c.id})}" method="post"
+                              th:data-confirm="${c.shared} ? #{competition.confirmDeleteShared(${c.name})} : #{competition.confirmDelete(${c.name})}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" th:title="#{common.delete}" th:aria-label="#{common.delete}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+</body>
+</html>

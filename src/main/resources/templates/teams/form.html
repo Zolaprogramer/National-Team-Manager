@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{team.team}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="${teamId != null} ? #{team.edit} : #{team.new}"></h1>
+    </div>
+
+    <section class="panel" style="max-width: 760px">
+        <div class="panel-body">
+            <form th:action="@{${formAction}}" th:object="${team}" method="post" enctype="multipart/form-data" novalidate>
+                <div th:replace="~{fragments :: globalErrors}"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="countryName" th:text="#{team.country}"></label>
+                        <input class="form-control" th:field="*{countryName}" th:errorclass="is-invalid" list="countryOptions" autocomplete="off">
+                        <datalist id="countryOptions">
+                            <option th:each="country : ${countryNames}" th:value="${country}"></option>
+                        </datalist>
+                        <div th:replace="~{fragments :: fieldError('countryName')}"></div>
+                    </div>
+                    <div class="col-12 order-md-last">
+                        <div class="flag-editor">
+                            <img class="flag flag-xl" id="flagPreview" alt=""
+                                 th:src="@{${currentFlagUrl != null ? currentFlagUrl : '/img/flag-default.svg'}}"
+                                 th:attr="data-preview-url=@{/teams/flag-preview},data-default-url=@{/img/flag-default.svg},data-current-url=@{${currentFlagUrl != null ? currentFlagUrl : '/img/flag-default.svg'}},data-custom-flag=${hasCustomFlag == true},data-recognized-text=#{team.flagRecognized},data-unrecognized-text=#{team.flagUnrecognized},data-upload-text=#{team.flagCustom},data-none-text=#{team.flagNone}">
+                            <div class="flex-grow-1">
+                                <div class="small text-secondary mb-2" id="flagHint" role="status"></div>
+                                <div class="row g-2">
+                                    <div class="col-md-7">
+                                        <label class="form-label" for="flag" th:text="#{team.flagUpload}"></label>
+                                        <input class="form-control" type="file" id="flag" name="flag" accept="image/jpeg,image/png,image/webp">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label" for="flagChoice" th:text="#{team.flagChoice}"></label>
+                                        <select class="form-select" th:field="*{flagChoice}">
+                                            <option th:each="c : ${flagChoices}" th:value="${c}" th:text="#{${c.messageKey}}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="teamName" th:text="#{team.name}"></label>
+                        <input class="form-control" th:field="*{teamName}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('teamName')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="confederation" th:text="#{team.confederation}"></label>
+                        <select class="form-select" th:field="*{confederation}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.select}"></option>
+                            <option th:each="c : ${confederations}" th:value="${c}" th:text="#{${c.messageKey}}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('confederation')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="foundedYear" th:text="#{team.founded}"></label>
+                        <input class="form-control" type="number" th:field="*{foundedYear}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('foundedYear')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="coach" th:text="#{team.coachName}"></label>
+                        <input class="form-control" th:field="*{coach}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('coach')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="coachPhoto" th:text="#{team.coachPhoto}"></label>
+                        <input class="form-control" type="file" id="coachPhoto" name="coachPhoto" accept="image/jpeg,image/png,image/webp">
+                        <div class="d-flex align-items-center gap-2 mt-2" th:if="${hasCoachPhoto}">
+                            <img class="avatar" alt="" th:src="@{/teams/{id}/coach-photo(id=${teamId})}">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" th:field="*{removeCoachPhoto}">
+                                <label class="form-check-label" th:for="${#ids.prev('removeCoachPhoto')}" th:text="#{team.removeCoachPhoto}"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="description" th:text="#{team.description}"></label>
+                        <textarea class="form-control" rows="4" th:field="*{description}" th:errorclass="is-invalid"></textarea>
+                        <div th:replace="~{fragments :: fieldError('description')}"></div>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <span th:text="#{common.save}"></span></button>
+                    <a class="btn btn-outline-secondary" th:href="@{${cancelUrl != null ? cancelUrl : '/teams'}}" th:text="#{common.cancel}"></a>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script th:src="@{/js/team-form.js}"></script>
+</div>
+</body>
+</html>

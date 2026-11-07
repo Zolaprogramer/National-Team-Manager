@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{competition.competition}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="${formAction == '/competitions'} ? #{competition.new} : #{competition.edit}"></h1>
+    </div>
+
+    <section class="panel" style="max-width: 760px">
+        <div class="panel-body">
+            <form th:action="@{${formAction}}" th:object="${competition}" method="post" enctype="multipart/form-data" novalidate>
+                <div th:replace="~{fragments :: globalErrors}"></div>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label" for="name" th:text="#{competition.name}"></label>
+                        <input class="form-control" th:field="*{name}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('name')}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="season" th:text="#{competition.season}"></label>
+                        <input class="form-control" th:field="*{season}" th:errorclass="is-invalid" placeholder="2026/27">
+                        <div th:replace="~{fragments :: fieldError('season')}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="type" th:text="#{competition.type}"></label>
+                        <select class="form-select" th:field="*{type}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.select}"></option>
+                            <option th:each="t : ${competitionTypes}" th:value="${t}" th:text="#{${t.messageKey}}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('type')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="startDate" th:text="#{competition.startDate}"></label>
+                        <input class="form-control" type="date" th:field="*{startDate}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('startDate')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="endDate" th:text="#{competition.endDate}"></label>
+                        <input class="form-control" type="date" th:field="*{endDate}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('endDate')}"></div>
+                    </div>
+                    <div class="col-12" th:if="${currentUser.admin and competitionId == null}">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" th:field="*{shared}">
+                            <label class="form-check-label" th:for="${#ids.prev('shared')}" th:text="#{competition.sharedLabel}"></label>
+                        </div>
+                    </div>
+                    <div class="col-12" th:if="${currentUser.admin}">
+                        <div class="logo-editor">
+                            <img class="competition-logo competition-logo-xl" id="logoPreview" th:alt="#{competition.logo}"
+                                 th:src="${currentLogo != null and currentLogo.logoPath != null} ? @{/competitions/{id}/logo(id=${currentLogo.id}, v=${#strings.substringAfter(currentLogo.logoPath, '/')})} : @{/img/competition-default.svg}"
+                                 th:attr="data-default-url=@{/img/competition-default.svg}">
+                            <div class="flex-grow-1">
+                                <label class="form-label" for="logo" th:text="#{competition.logoHint}"></label>
+                                <input class="form-control" type="file" id="logo" name="logo"
+                                       accept=".png,.jpg,.jpeg,.svg,image/png,image/jpeg,image/svg+xml">
+                                <div class="form-check mt-2" th:if="${currentLogo != null and currentLogo.logoPath != null}">
+                                    <input class="form-check-input" type="checkbox" th:field="*{removeLogo}">
+                                    <label class="form-check-label" th:for="${#ids.prev('removeLogo')}" th:text="#{competition.removeLogo}"></label>
+                                </div>
+                                <div class="form-text" th:text="#{competition.logoKept}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 form-text" th:unless="${currentUser.admin}" th:text="#{competition.logoAdminOnly}"></div>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <span th:text="#{common.save}"></span></button>
+                    <a class="btn btn-outline-secondary" th:href="@{/competitions}" th:text="#{common.cancel}"></a>
+                </div>
+            </form>
+            <script th:src="@{/js/competition-form.js}"></script>
+        </div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Kopiraj ovaj fajl kao application-local.properties (u istom folderu) i upiši svoje podatke.
+# Fajl application-local.properties je u .gitignore i ne ulazi u repozitorij.
+spring.datasource.username=ntm_app
+spring.datasource.password=UPISI_SVOJU_LOZINKU

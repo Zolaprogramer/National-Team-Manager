@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Stadium">
+  <rect width="640" height="360" fill="#111f35"/>
+  <path d="M0 250 80 150h480l80 100v110H0z" fill="#1a2c49"/>
+  <path d="M90 165h460l52 70H38z" fill="#243655"/>
+  <path d="M60 245h520l40 115H20z" fill="#15803d"/>
+  <path d="M320 245v115M180 300a140 26 0 0 0 280 0 140 26 0 0 0-280 0" fill="none" stroke="#e6edf7" stroke-opacity=".55" stroke-width="3"/>
+  <g fill="#93a4bd">
+    <rect x="96" y="60" width="8" height="100"/>
+    <rect x="536" y="60" width="8" height="100"/>
+    <rect x="72" y="42" width="56" height="22" rx="3"/>
+    <rect x="512" y="42" width="56" height="22" rx="3"/>
+  </g>
+</svg>

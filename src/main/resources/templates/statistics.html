@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{nav.statistics}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header"><h1 th:text="#{nav.statistics}"></h1></div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-flag-fill', #{stats.teams}, ${stats.teamCount})}"></div></div>
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-people-fill', #{stats.players}, ${stats.playerCount})}"></div></div>
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-calendar-event-fill', #{stats.matches}, ${stats.matchCount})}"></div></div>
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-bullseye', #{stats.goals}, ${stats.goalsScored})}"></div></div>
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-trophy-fill', #{stats.wins}, ${stats.wins})}"></div></div>
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-x-octagon-fill', #{stats.losses}, ${stats.losses})}"></div></div>
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-dash-circle-fill', #{stats.draws}, ${stats.draws})}"></div></div>
+        <div class="col-6 col-lg-3"><div th:replace="~{fragments :: statCard('bi-check2-circle', #{stats.played}, ${stats.playedCount})}"></div></div>
+    </div>
+    <p class="small text-secondary mb-4" th:text="#{stats.note}"></p>
+
+    <div class="row g-3 mb-4">
+        <div class="col-lg-6">
+            <section class="panel h-100">
+                <div class="panel-header"><h2><i class="bi bi-bullseye me-1"></i> <span th:text="#{stats.topScorers}"></span></h2></div>
+                <div th:if="${#lists.isEmpty(stats.topScorers)}" class="empty-state" th:text="#{stats.noGoals}"></div>
+                <div class="table-responsive" th:unless="${#lists.isEmpty(stats.topScorers)}">
+                    <table class="table">
+                        <thead><tr><th>#</th><th th:text="#{player.player}"></th><th th:text="#{team.team}"></th><th class="text-end" th:text="#{stats.goalsShort}"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="p, row : ${stats.topScorers}">
+                            <td th:text="${row.count}"></td>
+                            <td><a th:href="@{/players/{id}(id=${p.playerId})}" th:text="${p.playerName}"></a></td>
+                            <td th:text="${p.teamName}"></td>
+                            <td class="text-end fw-bold" th:text="${p.goals}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-6">
+            <section class="panel h-100">
+                <div class="panel-header"><h2><i class="bi bi-person-check-fill me-1"></i> <span th:text="#{stats.mostAppearances}"></span></h2></div>
+                <div th:if="${#lists.isEmpty(stats.mostAppearances)}" class="empty-state" th:text="#{stats.noAppearances}"></div>
+                <div class="table-responsive" th:unless="${#lists.isEmpty(stats.mostAppearances)}">
+                    <table class="table">
+                        <thead><tr><th>#</th><th th:text="#{player.player}"></th><th th:text="#{team.team}"></th><th class="text-end" th:text="#{stats.appearances}"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="p, row : ${stats.mostAppearances}">
+                            <td th:text="${row.count}"></td>
+                            <td><a th:href="@{/players/{id}(id=${p.playerId})}" th:text="${p.playerName}"></a></td>
+                            <td th:text="${p.teamName}"></td>
+                            <td class="text-end fw-bold" th:text="${p.appearances}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <section class="panel mb-4">
+        <div class="panel-header"><h2><i class="bi bi-flag-fill me-1"></i> <span th:text="#{stats.teamStats}"></span></h2></div>
+        <div th:if="${#lists.isEmpty(stats.teams)}" class="empty-state" th:text="#{team.none}"></div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(stats.teams)}">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th th:text="#{team.team}"></th><th class="text-center" th:text="#{stats.squad}"></th><th class="text-center" th:text="#{stats.matchesShort}"></th>
+                    <th class="text-center" th:text="#{stats.w}"></th><th class="text-center" th:text="#{stats.d}"></th><th class="text-center" th:text="#{stats.l}"></th>
+                    <th class="text-center" th:text="#{stats.goalsShort}"></th><th class="text-center" th:text="#{stats.gd}"></th><th class="text-center" th:text="#{stats.points}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="t : ${stats.teams}">
+                    <td><a th:href="@{/teams/{id}(id=${t.teamId})}" th:text="${t.teamName}"></a></td>
+                    <td class="text-center" th:text="${t.playerCount}"></td>
+                    <td class="text-center" th:text="${t.played}"></td>
+                    <td class="text-center" th:text="${t.wins}"></td>
+                    <td class="text-center" th:text="${t.draws}"></td>
+                    <td class="text-center" th:text="${t.losses}"></td>
+                    <td class="text-center" th:text="${t.goalsFor} + ':' + ${t.goalsAgainst}"></td>
+                    <td class="text-center" th:text="${t.goalDifference()}"></td>
+                    <td class="text-center fw-bold" th:text="${t.points()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-body small text-secondary py-2" th:text="#{stats.legend}"></div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header"><h2><i class="bi bi-people-fill me-1"></i> <span th:text="#{stats.playerStats}"></span></h2></div>
+        <div th:if="${#lists.isEmpty(stats.players)}" class="empty-state" th:text="#{player.none}"></div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(stats.players)}">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th th:text="#{player.player}"></th><th th:text="#{team.team}"></th><th th:text="#{player.position}"></th><th class="text-center" th:text="#{stats.appearances}"></th>
+                    <th class="text-center" th:text="#{stats.goalsShort}"></th><th class="text-center" th:text="#{stats.assists}"></th>
+                    <th class="text-center" th:text="#{stats.yellow}"></th><th class="text-center" th:text="#{stats.red}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${stats.players}">
+                    <td><a th:href="@{/players/{id}(id=${p.playerId})}" th:text="${p.playerName}"></a></td>
+                    <td th:text="${p.teamName}"></td>
+                    <td th:text="#{${p.position.messageKey}}"></td>
+                    <td class="text-center" th:text="${p.appearances}"></td>
+                    <td class="text-center" th:text="${p.goals}"></td>
+                    <td class="text-center" th:text="${p.assists}"></td>
+                    <td class="text-center" th:text="${p.yellowCards}"></td>
+                    <td class="text-center" th:text="${p.redCards}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+</body>
+</html>

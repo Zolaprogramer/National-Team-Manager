@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{lineup.lineup}, ~{::#content})}">
+<body>
+<div id="content" th:with="m=${editor.match}, team=${editor.team}">
+    <div class="page-header">
+        <div>
+            <h1 th:text="#{lineup.title(${team.teamName})}"></h1>
+            <a th:href="@{/matches/{id}(id=${m.id})}" th:text="${m.homeTeam.teamName} + ' - ' + ${m.awayTeam.teamName}"></a>
+        </div>
+    </div>
+
+    <section class="panel" th:unless="${editor.canFieldStartingEleven()}">
+        <div class="empty-state">
+            <i class="bi bi-people"></i>
+            <p th:text="#{lineup.squadTooSmall(${#lists.size(editor.goalkeepers)}, ${#lists.size(editor.outfieldPlayers)})}"></p>
+            <a class="btn btn-primary" th:href="@{/teams/{id}(id=${team.id})}" th:text="#{lineup.openTeam}"></a>
+        </div>
+    </section>
+
+    <form th:if="${editor.canFieldStartingEleven()}" th:action="@{/matches/{id}/lineups/{teamId}(id=${m.id}, teamId=${team.id})}"
+          th:object="${lineup}" method="post" novalidate>
+        <div th:replace="~{fragments :: globalErrors}"></div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-lg-6">
+                <section class="panel h-100">
+                    <div class="panel-header"><h2 th:text="#{lineup.formationAndStarters}"></h2></div>
+                    <div class="panel-body">
+                        <div class="row g-2 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="formation" th:text="#{lineup.formation}"></label>
+                                <select class="form-select" th:field="*{formation}" th:errorclass="is-invalid">
+                                    <option th:each="f : ${formations}" th:value="${f}" th:text="${f.label}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('formation')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="captainId" th:text="#{lineup.captain}"></label>
+                                <select class="form-select" th:field="*{captainId}" th:errorclass="is-invalid">
+                                    <option value="" th:text="#{common.select}"></option>
+                                    <option th:each="p : ${editor.squad}" th:value="${p.id}" th:text="${p.jerseyNumber} + ' - ' + ${p.fullName}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('captainId')}"></div>
+                            </div>
+                        </div>
+
+                        <div class="slot-row" th:each="i : ${#numbers.sequence(0, 10)}">
+                            <span class="slot-label" th:attr="data-slot-label=${i}" th:text="${i == 0} ? 'GK' : ''"></span>
+                            <select class="form-select" th:name="|starterIds[${i}]|" th:attr="data-slot=${i},aria-label=#{lineup.slot(${i + 1})}">
+                                <option value="" th:text="#{lineup.selectPlayer}"></option>
+                                <option th:each="p : ${i == 0} ? ${editor.goalkeepers} : ${editor.outfieldPlayers}"
+                                        th:value="${p.id}" th:selected="${lineup.starterIds[i] == p.id}"
+                                        th:attr="data-number=${p.jerseyNumber},data-last-name=${p.lastName}"
+                                        th:text="${p.jerseyNumber} + ' - ' + ${p.fullName} + ' (' + ${p.position.shortLabel} + ')'"></option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-lg-6">
+                <section class="panel h-100">
+                    <div class="panel-header"><h2 th:text="#{lineup.pitchLayout}"></h2></div>
+                    <div class="panel-body">
+                        <div class="pitch">
+                            <th:block th:replace="~{fragments :: pitchMarkings}"></th:block>
+                            <div id="pitchPlayers"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <section class="panel mb-3">
+            <div class="panel-header">
+                <h2 th:text="#{lineup.substitutes}"></h2>
+                <span class="small text-secondary"><span th:text="#{lineup.selected}"></span> <span id="substituteCount" th:attr="data-max=${maxSubstitutes}">0</span> / <span th:text="${maxSubstitutes}"></span></span>
+            </div>
+            <div class="panel-body">
+                <div class="substitute-grid">
+                    <div class="form-check" th:each="p : ${editor.squad}">
+                        <input class="form-check-input" type="checkbox" name="substituteIds" data-substitute="true"
+                               th:id="|substitute${p.id}|" th:value="${p.id}" th:checked="${lineup.substituteIds.contains(p.id)}">
+                        <label class="form-check-label" th:for="|substitute${p.id}|"
+                               th:text="${p.jerseyNumber} + ' - ' + ${p.fullName} + ' (' + ${p.position.shortLabel} + ')'"></label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel mb-3">
+            <div class="panel-header"><h2 th:text="#{lineup.tacticNote}"></h2></div>
+            <div class="panel-body">
+                <textarea class="form-control" rows="3" th:field="*{tactic}" th:errorclass="is-invalid" th:aria-label="#{lineup.tacticNote}"></textarea>
+                <div th:replace="~{fragments :: fieldError('tactic')}"></div>
+            </div>
+        </section>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <span th:text="#{lineup.save}"></span></button>
+            <a class="btn btn-outline-secondary" th:href="@{/matches/{id}(id=${m.id})}" th:text="#{common.cancel}"></a>
+        </div>
+
+        <script th:inline="javascript">
+            window.FORMATION_SLOTS = /*[[${formationSlots}]]*/ {};
+        </script>
+        <script th:src="@{/js/lineup-form.js}"></script>
+    </form>
+</div>
+</body>
+</html>

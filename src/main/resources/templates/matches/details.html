@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{match.match}, ~{::#content})}">
+<body>
+<div id="content" th:with="m=${details.match}">
+    <div class="page-header">
+        <h1 th:text="#{match.details}"></h1>
+        <div class="actions">
+            <a class="btn btn-outline-secondary" th:href="@{/matches/{id}/edit(id=${m.id})}"><i class="bi bi-pencil"></i> <span th:text="#{common.edit}"></span></a>
+            <form th:action="@{/matches/{id}/delete(id=${m.id})}" method="post" th:data-confirm="#{match.confirmDelete}">
+                <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> <span th:text="#{common.delete}"></span></button>
+            </form>
+        </div>
+    </div>
+
+    <section class="panel mb-4">
+        <div class="scoreboard">
+            <div class="team-name">
+                <img th:replace="~{fragments :: flag(${m.homeTeam}, 'flag-lg d-block mx-auto mb-2')}">
+                <a class="text-reset text-decoration-none" th:href="@{/teams/{id}(id=${m.homeTeam.id})}" th:text="${m.homeTeam.teamName}"></a>
+            </div>
+            <div>
+                <div class="score" th:text="${m.status.hasStarted()} ? ${m.homeGoals} + ' : ' + ${m.awayGoals} : '- : -'"></div>
+                <span class="status-pill mt-2" th:classappend="'status-' + ${#strings.toLowerCase(m.status.name())}" th:text="#{${m.status.messageKey}}"></span>
+            </div>
+            <div class="team-name">
+                <img th:replace="~{fragments :: flag(${m.awayTeam}, 'flag-lg d-block mx-auto mb-2')}">
+                <a class="text-reset text-decoration-none" th:href="@{/teams/{id}(id=${m.awayTeam.id})}" th:text="${m.awayTeam.teamName}"></a>
+            </div>
+        </div>
+        <div class="panel-body border-top text-center text-secondary small">
+            <span class="me-3"><i class="bi bi-calendar3 me-1"></i><span th:text="${#temporals.format(m.kickoff, #messages.msg('format.dateTime'))}"></span></span>
+            <span class="me-3" th:unless="${m.venue != null}"><i class="bi bi-geo-alt me-1"></i><span th:text="${m.stadiumName}"></span></span>
+            <span th:if="${m.competition != null}" class="d-inline-flex align-items-center gap-1">
+                <img th:replace="~{fragments :: competitionLogo(${m.competition}, 'competition-logo-md')}">
+                <a class="text-reset" th:href="@{/competitions/{id}(id=${m.competition.id})}" th:text="${m.competition.name}"></a>
+            </span>
+            <span th:unless="${m.competition != null}"><i class="bi bi-award me-1"></i><span th:text="#{match.friendly}"></span></span>
+        </div>
+    </section>
+
+    <section class="panel mb-4 match-venue" th:if="${m.venue != null}">
+        <a th:href="@{/stadiums/{id}(id=${m.venue.id})}">
+            <img class="stadium-thumb-lg" th:alt="${m.venue.name}"
+                 th:src="${m.venue.photoFileName != null} ? @{/stadiums/{id}/photo(id=${m.venue.id})} : @{/img/stadium-default.svg}">
+        </a>
+        <div>
+            <div class="stat-label" th:text="#{match.stadium}"></div>
+            <a class="fw-bold fs-5 text-reset text-decoration-none" th:href="@{/stadiums/{id}(id=${m.venue.id})}" th:text="${m.venue.name}"></a>
+            <span class="badge text-bg-success ms-1" th:if="${m.venue.mainStadium}" th:text="#{stadium.main}"></span>
+            <div class="text-secondary" th:text="${m.venue.city}"></div>
+        </div>
+    </section>
+
+    <div class="row g-3">
+        <div class="col-lg-7">
+            <section class="panel mb-3">
+                <div class="panel-header"><h2><i class="bi bi-list-ol me-1"></i> <span th:text="#{event.events}"></span></h2></div>
+                <div th:if="${#lists.isEmpty(details.events)}" class="empty-state">
+                    <i class="bi bi-stopwatch"></i> <span th:text="#{event.none}"></span>
+                </div>
+                <ul class="event-list" th:unless="${#lists.isEmpty(details.events)}">
+                    <li class="event-row" th:each="e : ${details.events}">
+                        <span class="event-minute"><span th:text="${e.minute}"></span>'</span>
+                        <span class="event-icon" th:classappend="'event-' + ${#strings.toLowerCase(e.type.name())}" th:switch="${e.type.name()}">
+                            <i th:case="'GOAL'" class="bi bi-record-circle-fill"></i>
+                            <i th:case="'ASSIST'" class="bi bi-share-fill"></i>
+                            <i th:case="'YELLOW_CARD'" class="bi bi-file-fill"></i>
+                            <i th:case="'RED_CARD'" class="bi bi-file-fill"></i>
+                            <i th:case="'SUBSTITUTION'" class="bi bi-arrow-left-right"></i>
+                        </span>
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="fw-semibold" th:text="${e.player.fullName}"></div>
+                            <div class="small text-secondary">
+                                <span th:text="#{${e.type.messageKey}} + ' · ' + ${e.player.team.teamName}"></span>
+                                <span th:if="${e.description}" th:text="' · ' + ${e.description}"></span>
+                            </div>
+                        </div>
+                        <form th:action="@{/matches/{id}/events/{eventId}/delete(id=${m.id}, eventId=${e.id})}" method="post"
+                              th:data-confirm="#{event.confirmDelete}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" th:title="#{event.delete}" th:aria-label="#{event.delete}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="panel" th:if="${details.canRecordEvents()}">
+                <div class="panel-header"><h2><i class="bi bi-plus-circle me-1"></i> <span th:text="#{event.new}"></span></h2></div>
+                <div class="panel-body">
+                    <form th:action="@{/matches/{id}/events(id=${m.id})}" method="post" class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label" for="eventPlayer" th:text="#{player.player}"></label>
+                            <select class="form-select" id="eventPlayer" name="playerId" required>
+                                <option value="" th:text="#{common.select}"></option>
+                                <optgroup th:label="${m.homeTeam.teamName}">
+                                    <option th:each="p : ${details.homePlayers}" th:value="${p.id}" th:text="${p.jerseyNumber} + ' - ' + ${p.fullName}"></option>
+                                </optgroup>
+                                <optgroup th:label="${m.awayTeam.teamName}">
+                                    <option th:each="p : ${details.awayPlayers}" th:value="${p.id}" th:text="${p.jerseyNumber} + ' - ' + ${p.fullName}"></option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="eventType" th:text="#{event.type}"></label>
+                            <select class="form-select" id="eventType" name="type" required>
+                                <option th:each="t : ${eventTypes}" th:value="${t}" th:text="#{${t.messageKey}}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label" for="eventMinute" th:text="#{event.minute}"></label>
+                            <input class="form-control" id="eventMinute" name="minute" type="number" min="1" max="130" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="eventDescription" th:text="#{event.description}"></label>
+                            <input class="form-control" id="eventDescription" name="description" maxlength="255"
+                                   th:placeholder="#{event.descriptionHint}">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <span th:text="#{event.record}"></span></button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            <p class="small text-secondary" th:unless="${details.canRecordEvents()}" th:text="#{event.notAvailable}"></p>
+        </div>
+
+        <div class="col-lg-5">
+            <section class="panel mb-3" th:if="${details.canRecordResult()}">
+                <div class="panel-header"><h2><i class="bi bi-123 me-1"></i> <span th:text="#{match.recordResult}"></span></h2></div>
+                <div class="panel-body">
+                    <form th:action="@{/matches/{id}/result(id=${m.id})}" method="post">
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label" for="resultHome" th:text="${m.homeTeam.teamName}"></label>
+                                <input class="form-control" id="resultHome" name="homeGoals" type="number" min="0" required
+                                       th:value="${m.homeGoals} ?: 0">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label" for="resultAway" th:text="${m.awayTeam.teamName}"></label>
+                                <input class="form-control" id="resultAway" name="awayGoals" type="number" min="0" required
+                                       th:value="${m.awayGoals} ?: 0">
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" name="finished" value="true" class="btn btn-primary">
+                                <i class="bi bi-flag-fill"></i> <span th:text="#{match.finish}"></span>
+                            </button>
+                            <button type="submit" name="finished" value="false" class="btn btn-outline-secondary" th:text="#{match.markInProgress}"></button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header"><h2><i class="bi bi-diagram-3-fill me-1"></i> <span th:text="#{lineup.lineups}"></span></h2></div>
+                <div class="panel-body d-grid gap-2">
+                    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                        <span class="fw-semibold"><img th:replace="~{fragments :: flag(${m.homeTeam}, '')}"> <span th:text="${m.homeTeam.teamName}"></span></span>
+                        <div class="d-flex gap-1">
+                            <a class="btn btn-sm btn-outline-light" th:if="${details.homeLineupExists}"
+                               th:href="@{/matches/{id}/lineups/{teamId}(id=${m.id}, teamId=${m.homeTeam.id})}" th:text="#{common.view}"></a>
+                            <a class="btn btn-sm btn-primary" th:if="${details.homeLineupExists and details.canEditLineups()}"
+                               th:href="@{/matches/{id}/lineups/{teamId}/tactics(id=${m.id}, teamId=${m.homeTeam.id})}" th:text="#{tactics.tactics}"></a>
+                            <a class="btn btn-sm btn-primary" th:if="${!details.homeLineupExists and details.canEditLineups()}"
+                               th:href="@{/matches/{id}/lineups/{teamId}/edit(id=${m.id}, teamId=${m.homeTeam.id})}" th:text="#{common.create}"></a>
+                            <span class="small text-secondary" th:if="${!details.homeLineupExists and !details.canEditLineups()}" th:text="#{lineup.none}"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                        <span class="fw-semibold"><img th:replace="~{fragments :: flag(${m.awayTeam}, '')}"> <span th:text="${m.awayTeam.teamName}"></span></span>
+                        <div class="d-flex gap-1">
+                            <a class="btn btn-sm btn-outline-light" th:if="${details.awayLineupExists}"
+                               th:href="@{/matches/{id}/lineups/{teamId}(id=${m.id}, teamId=${m.awayTeam.id})}" th:text="#{common.view}"></a>
+                            <a class="btn btn-sm btn-primary" th:if="${details.awayLineupExists and details.canEditLineups()}"
+                               th:href="@{/matches/{id}/lineups/{teamId}/tactics(id=${m.id}, teamId=${m.awayTeam.id})}" th:text="#{tactics.tactics}"></a>
+                            <a class="btn btn-sm btn-primary" th:if="${!details.awayLineupExists and details.canEditLineups()}"
+                               th:href="@{/matches/{id}/lineups/{teamId}/edit(id=${m.id}, teamId=${m.awayTeam.id})}" th:text="#{common.create}"></a>
+                            <span class="small text-secondary" th:if="${!details.awayLineupExists and !details.canEditLineups()}" th:text="#{lineup.none}"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+</body>
+</html>

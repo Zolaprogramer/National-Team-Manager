@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{tactics.title}, ~{::#content})}">
+<body>
+<div id="content" th:with="m=${board.match}, team=${board.team}">
+    <div class="page-header">
+        <div class="d-flex align-items-center gap-3">
+            <img th:replace="~{fragments :: flag(${team}, 'flag-lg')}">
+            <div>
+                <h1 th:text="#{tactics.title} + ': ' + ${team.teamName}"></h1>
+                <a class="match-teams" th:href="@{/matches/{id}(id=${m.id})}">
+                    <img th:replace="~{fragments :: flag(${m.homeTeam}, '')}">
+                    <span th:text="${m.homeTeam.teamName}"></span>
+                    <span>-</span>
+                    <img th:replace="~{fragments :: flag(${m.awayTeam}, '')}">
+                    <span th:text="${m.awayTeam.teamName}"></span>
+                </a>
+            </div>
+        </div>
+        <div th:replace="~{fragments :: coachCard(${team})}"></div>
+    </div>
+
+    <form id="restoreForm" th:action="@{/matches/{id}/lineups/{teamId}/tactics/restore(id=${m.id}, teamId=${team.id})}" method="post"
+          th:data-confirm="#{tactics.confirmRestore}"></form>
+
+    <form id="tacticsForm" th:action="@{/matches/{id}/lineups/{teamId}/tactics(id=${m.id}, teamId=${team.id})}"
+          th:object="${tactics}" method="post" novalidate>
+        <div th:replace="~{fragments :: globalErrors}"></div>
+        <div id="hiddenFields"></div>
+
+        <section class="panel mb-3">
+            <div class="panel-body tactics-toolbar">
+                <div class="tactics-formation">
+                    <label class="form-label" for="formation" th:text="#{lineup.formation}"></label>
+                    <select class="form-select" th:field="*{formation}">
+                        <option th:each="f : ${formations}" th:value="${f}" th:text="${f.label}"></option>
+                    </select>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="submit" class="btn btn-primary" id="saveTactics"><i class="bi bi-check-lg"></i> <span th:text="#{tactics.save}"></span></button>
+                    <button type="button" class="btn btn-outline-secondary" id="resetBoard"><i class="bi bi-arrow-counterclockwise"></i> <span th:text="#{tactics.discard}"></span></button>
+                    <button type="submit" form="restoreForm" class="btn btn-outline-secondary" th:disabled="${!board.previousStateExists}"
+                            th:title="${board.previousStateExists} ? '' : #{tactics.noPrevious}">
+                        <i class="bi bi-clock-history"></i> <span th:text="#{tactics.restore}"></span>
+                    </button>
+                    <a class="btn btn-outline-secondary" th:href="@{/matches/{id}/lineups/{teamId}(id=${m.id}, teamId=${team.id})}" th:text="#{common.view}"></a>
+                </div>
+            </div>
+        </section>
+
+        <div class="alert alert-info py-2 small" id="boardMessage" role="status" th:text="#{tactics.hint}"></div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-xl-7">
+                <section class="panel">
+                    <div class="panel-body tactics-pitch-wrap">
+                        <div class="pitch pitch-board">
+                            <th:block th:replace="~{fragments :: pitchMarkings}"></th:block>
+                            <div id="boardPlayers"></div>
+                        </div>
+                        <div class="tactics-legend small text-secondary mt-2">
+                            <span><span class="legend-dot legend-goalkeeper"></span> <span th:text="#{tactics.legendGoalkeeper}"></span></span>
+                            <span><span class="legend-dot legend-misplaced"></span> <span th:text="#{tactics.legendMisplaced}"></span></span>
+                            <span th:text="#{tactics.legendRoles}"></span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-xl-5">
+                <section class="panel mb-3">
+                    <div class="panel-header bench-header" id="benchZone" data-zone="bench">
+                        <h2><i class="bi bi-people-fill me-1"></i> <span th:text="#{lineup.substitutes}"></span></h2>
+                        <span class="small text-secondary"><span id="benchCount">0</span> / <span th:text="${maxSubstitutes}"></span></span>
+                    </div>
+                    <div class="bench-list" id="benchList" data-zone="bench"></div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header bench-header" id="outZone" data-zone="out">
+                        <h2><i class="bi bi-person-dash-fill me-1"></i> <span th:text="#{tactics.outOfLineup}"></span></h2>
+                        <span class="small text-secondary" id="outCount">0</span>
+                    </div>
+                    <div class="bench-list" id="outList" data-zone="out"></div>
+                </section>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-lg-7">
+                <section class="panel h-100">
+                    <div class="panel-header"><h2><i class="bi bi-sliders me-1"></i> <span th:text="#{tactics.settings}"></span></h2></div>
+                    <div class="panel-body">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="form-label" for="playStyle" th:text="#{tactics.playStyle}"></label>
+                                <select class="form-select" th:field="*{playStyle}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${playStyles}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('playStyle')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="mentality" th:text="#{tactics.mentality}"></label>
+                                <select class="form-select" th:field="*{mentality}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${mentalities}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('mentality')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="playWidth" th:text="#{tactics.playWidth}"></label>
+                                <select class="form-select" th:field="*{playWidth}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${playWidths}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('playWidth')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="playTempo" th:text="#{tactics.playTempo}"></label>
+                                <select class="form-select" th:field="*{playTempo}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${playTempos}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('playTempo')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="pressing" th:text="#{tactics.pressing}"></label>
+                                <select class="form-select" th:field="*{pressing}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${pressings}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('pressing')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="defensiveLine" th:text="#{tactics.defensiveLine}"></label>
+                                <select class="form-select" th:field="*{defensiveLine}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${defensiveLines}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('defensiveLine')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="passingStyle" th:text="#{tactics.passingStyle}"></label>
+                                <select class="form-select" th:field="*{passingStyle}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${passingStyles}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('passingStyle')}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="attackDirection" th:text="#{tactics.attackDirection}"></label>
+                                <select class="form-select" th:field="*{attackDirection}" th:errorclass="is-invalid">
+                                    <option th:each="o : ${attackDirections}" th:value="${o}" th:text="#{${o.messageKey}}"></option>
+                                </select>
+                                <div th:replace="~{fragments :: fieldError('attackDirection')}"></div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="tactic" th:text="#{lineup.tacticNote}"></label>
+                                <textarea class="form-control" rows="2" th:field="*{tactic}" th:errorclass="is-invalid"></textarea>
+                                <div th:replace="~{fragments :: fieldError('tactic')}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-lg-5">
+                <section class="panel h-100">
+                    <div class="panel-header"><h2><i class="bi bi-person-gear me-1"></i> <span th:text="#{tactics.roles}"></span></h2></div>
+                    <div class="panel-body">
+                        <div class="mb-2">
+                            <label class="form-label" for="captainId" th:text="#{lineup.captain}"></label>
+                            <select class="form-select role-select" th:field="*{captainId}" th:errorclass="is-invalid" data-role="captain">
+                                <option value="" th:text="#{common.select}"></option>
+                                <option th:each="p : ${board.players}" th:value="${p.id}" th:text="${p.number} + ' - ' + ${p.fullName}"></option>
+                            </select>
+                            <div th:replace="~{fragments :: fieldError('captainId')}"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="penaltyTakerId" th:text="#{tactics.penaltyTaker}"></label>
+                            <select class="form-select role-select" th:field="*{penaltyTakerId}" data-role="penalty">
+                                <option value="" th:text="#{tactics.noneSelected}"></option>
+                                <option th:each="p : ${board.players}" th:value="${p.id}" th:text="${p.number} + ' - ' + ${p.fullName}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="freeKickTakerId" th:text="#{tactics.freeKickTaker}"></label>
+                            <select class="form-select role-select" th:field="*{freeKickTakerId}" data-role="freeKick">
+                                <option value="" th:text="#{tactics.noneSelected}"></option>
+                                <option th:each="p : ${board.players}" th:value="${p.id}" th:text="${p.number} + ' - ' + ${p.fullName}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="cornerTakerId" th:text="#{tactics.cornerTaker}"></label>
+                            <select class="form-select role-select" th:field="*{cornerTakerId}" data-role="corner">
+                                <option value="" th:text="#{tactics.noneSelected}"></option>
+                                <option th:each="p : ${board.players}" th:value="${p.id}" th:text="${p.number} + ' - ' + ${p.fullName}"></option>
+                            </select>
+                        </div>
+                        <div class="form-label" th:text="#{tactics.duties}"></div>
+                        <div id="dutyList"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </form>
+
+    <script th:inline="javascript">
+        window.TACTICS_BOARD = {
+            players: [[${board.players}]],
+            formationSlots: [[${formationSlots}]],
+            starterIds: [[${tactics.starterIds}]],
+            substituteIds: [[${tactics.substituteIds}]],
+            duties: [[${tactics.duties}]],
+            maxSubstitutes: [[${maxSubstitutes}]],
+            silhouetteUrl: [[@{/img/player-silhouette.svg}]],
+            dutyOptions: [
+                {value: 'OFFENSIVE', label: [[#{PlayerDuty.OFFENSIVE}]]},
+                {value: 'BALANCED', label: [[#{PlayerDuty.BALANCED}]]},
+                {value: 'DEFENSIVE', label: [[#{PlayerDuty.DEFENSIVE}]]}
+            ],
+            text: {
+                hint: [[#{tactics.hint}]],
+                selected: [[#{tactics.msgSelected}]],
+                swapped: [[#{tactics.msgSwapped}]],
+                goalkeeperRule: [[#{tactics.msgGoalkeeperRule}]],
+                starterMustStay: [[#{tactics.msgStarterMustStay}]],
+                benchFull: [[#{tactics.msgBenchFull}]],
+                formationChanged: [[#{tactics.msgFormationChanged}]],
+                needEleven: [[#{tactics.msgNeedEleven}]],
+                needCaptain: [[#{tactics.msgNeedCaptain}]],
+                rolesCleared: [[#{tactics.msgRolesCleared}]],
+                reset: [[#{tactics.msgReset}]],
+                emptySlot: [[#{tactics.emptySlot}]],
+                emptyList: [[#{tactics.emptyList}]],
+                badgeCaptain: [[#{tactics.badgeCaptain}]],
+                badgePenalty: [[#{tactics.badgePenalty}]],
+                badgeFreeKick: [[#{tactics.badgeFreeKick}]],
+                badgeCorner: [[#{tactics.badgeCorner}]]
+            }
+        };
+    </script>
+    <script th:src="@{/js/tactics-board.js}"></script>
+</div>
+</body>
+</html>

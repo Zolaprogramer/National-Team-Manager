@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{match.match}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="${formAction == '/matches'} ? #{match.new} : #{match.edit}"></h1>
+    </div>
+
+    <section class="panel" th:if="${#lists.size(teams) < 2}" style="max-width: 760px">
+        <div class="empty-state">
+            <i class="bi bi-flag"></i>
+            <p th:text="#{match.needTwoTeams}"></p>
+            <a class="btn btn-primary" th:href="@{/teams/new}" th:text="#{team.new}"></a>
+        </div>
+    </section>
+
+    <section class="panel" th:unless="${#lists.size(teams) < 2}" style="max-width: 860px">
+        <div class="panel-body">
+            <form th:action="@{${formAction}}" th:object="${match}" method="post" novalidate>
+                <div th:replace="~{fragments :: globalErrors}"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="homeTeamId" th:text="#{match.home}"></label>
+                        <select class="form-select" th:field="*{homeTeamId}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.select}"></option>
+                            <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('homeTeamId')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="awayTeamId" th:text="#{match.away}"></label>
+                        <select class="form-select" th:field="*{awayTeamId}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.select}"></option>
+                            <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('awayTeamId')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="kickoff" th:text="#{match.kickoff}"></label>
+                        <input class="form-control" type="datetime-local" th:field="*{kickoff}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('kickoff')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="stadiumId" th:text="#{match.stadium}"></label>
+                        <select class="form-select" th:field="*{stadiumId}">
+                            <option value="" th:text="#{match.otherStadium}"></option>
+                            <option th:each="s : ${stadiums}" th:value="${s.id}"
+                                    th:attr="data-team-id=${s.team.id},data-main=${s.mainStadium}"
+                                    th:text="${s.name} + ', ' + ${s.city} + (${s.mainStadium} ? ' (' + #{stadium.main} + ')' : '')"></option>
+                        </select>
+                        <div class="mt-2" id="customStadium">
+                            <label class="form-label" for="stadium" th:text="#{match.stadiumName}"></label>
+                            <input class="form-control" th:field="*{stadium}" th:errorclass="is-invalid">
+                            <div th:replace="~{fragments :: fieldError('stadium')}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="competitionId" th:text="#{match.competition}"></label>
+                        <div class="d-flex align-items-center gap-2">
+                            <img class="competition-logo competition-logo-md" id="competitionLogoPreview" alt="" hidden>
+                            <select class="form-select" th:field="*{competitionId}">
+                                <option value="" th:text="#{match.friendlyMatch}"></option>
+                                <option th:each="c : ${competitions}" th:value="${c.id}" th:text="${c.name} + ' (' + ${c.season} + ')'"
+                                        th:attr="data-logo-url=${c.logoPath != null} ? @{/competitions/{id}/logo(id=${c.id}, v=${#strings.substringAfter(c.logoPath, '/')})} : @{/img/competition-default.svg}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="status" th:text="#{match.status}"></label>
+                        <select class="form-select" th:field="*{status}" th:errorclass="is-invalid">
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="#{${s.messageKey}}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('status')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="homeGoals" th:text="#{match.homeGoals}"></label>
+                        <input class="form-control" type="number" min="0" th:field="*{homeGoals}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('homeGoals')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="awayGoals" th:text="#{match.awayGoals}"></label>
+                        <input class="form-control" type="number" min="0" th:field="*{awayGoals}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('awayGoals')}"></div>
+                    </div>
+                    <div class="col-12 form-text mt-1" th:text="#{match.scoreHint}"></div>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <span th:text="#{common.save}"></span></button>
+                    <a class="btn btn-outline-secondary" th:href="@{${cancelUrl}}" th:text="#{common.cancel}"></a>
+                </div>
+            </form>
+            <script th:src="@{/js/match-form.js}"></script>
+        </div>
+    </section>
+</div>
+</body>
+</html>

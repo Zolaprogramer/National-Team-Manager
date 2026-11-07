@@ -1,0 +1,1105 @@
+:root,
+[data-bs-theme="dark"] {
+    --ntm-navy-950: #070e1b;
+    --ntm-navy-900: #0b1525;
+    --ntm-navy-800: #111f35;
+    --ntm-navy-700: #1a2c49;
+    --ntm-line: #243655;
+    --ntm-green: #22c55e;
+    --ntm-green-dark: #16a34a;
+    --ntm-green-soft: rgba(34, 197, 94, .14);
+    --ntm-text: #e6edf7;
+    --ntm-muted: #93a4bd;
+    --ntm-danger: #f87171;
+    --ntm-amber: #fbbf24;
+    --ntm-blue: #60a5fa;
+
+    --bs-body-bg: var(--ntm-navy-900);
+    --bs-body-color: var(--ntm-text);
+    --bs-secondary-color: var(--ntm-muted);
+    --bs-border-color: var(--ntm-line);
+    --bs-card-bg: var(--ntm-navy-800);
+    --bs-link-color-rgb: 74, 222, 128;
+    --bs-link-hover-color-rgb: 134, 239, 172;
+    --bs-heading-color: #f4f7fc;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--ntm-navy-900);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Raspored stranice */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    --bs-offcanvas-width: 256px;
+    --bs-offcanvas-bg: var(--ntm-navy-950);
+    width: 256px;
+    flex-shrink: 0;
+    background: var(--ntm-navy-950);
+    border-right: 1px solid var(--ntm-line);
+}
+
+@media (min-width: 992px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+}
+
+.sidebar .offcanvas-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.25rem 1rem;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    padding: 0 .5rem 1.25rem;
+    color: var(--ntm-text);
+    text-decoration: none;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.brand small {
+    display: block;
+    color: var(--ntm-green);
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.brand-mark {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--ntm-green);
+    color: var(--ntm-navy-950);
+    font-size: 1.2rem;
+}
+
+.side-nav {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    flex-grow: 1;
+}
+
+.side-nav a {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .65rem .8rem;
+    border-radius: 8px;
+    color: var(--ntm-muted);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.side-nav a:hover {
+    background: var(--ntm-navy-800);
+    color: var(--ntm-text);
+}
+
+.side-nav a.active {
+    background: var(--ntm-green-soft);
+    color: var(--ntm-green);
+}
+
+.side-user {
+    padding-top: 1rem;
+    border-top: 1px solid var(--ntm-line);
+}
+
+.side-user .name {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.app-main {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 1rem;
+    background: var(--ntm-navy-950);
+    border-bottom: 1px solid var(--ntm-line);
+}
+
+.page-body {
+    padding: 1.75rem;
+    max-width: 1400px;
+}
+
+@media (max-width: 575.98px) {
+    .page-body {
+        padding: 1rem;
+    }
+}
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+/* Dugmad */
+.btn-primary {
+    --bs-btn-bg: var(--ntm-green-dark);
+    --bs-btn-border-color: var(--ntm-green-dark);
+    --bs-btn-hover-bg: var(--ntm-green);
+    --bs-btn-hover-border-color: var(--ntm-green);
+    --bs-btn-hover-color: var(--ntm-navy-950);
+    --bs-btn-active-bg: var(--ntm-green);
+    --bs-btn-active-border-color: var(--ntm-green);
+    --bs-btn-active-color: var(--ntm-navy-950);
+    --bs-btn-disabled-bg: var(--ntm-green-dark);
+    --bs-btn-disabled-border-color: var(--ntm-green-dark);
+    --bs-btn-color: #fff;
+    font-weight: 600;
+}
+
+/* Kartice */
+.panel {
+    background: var(--ntm-navy-800);
+    border: 1px solid var(--ntm-line);
+    border-radius: 12px;
+}
+
+.panel-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .9rem 1.15rem;
+    border-bottom: 1px solid var(--ntm-line);
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.panel-body {
+    padding: 1.15rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    height: 100%;
+    padding: 1rem 1.15rem;
+    background: var(--ntm-navy-800);
+    border: 1px solid var(--ntm-line);
+    border-radius: 12px;
+}
+
+.stat-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--ntm-green-soft);
+    color: var(--ntm-green);
+    font-size: 1.25rem;
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.stat-label {
+    color: var(--ntm-muted);
+    font-size: .82rem;
+}
+
+.welcome {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--ntm-line);
+    border-radius: 12px;
+    background: linear-gradient(115deg, var(--ntm-navy-700), var(--ntm-navy-800) 55%, #123a2a);
+}
+
+.welcome h1 {
+    margin-bottom: .25rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+/* Tabele */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--ntm-text);
+    --bs-table-border-color: var(--ntm-line);
+    --bs-table-hover-bg: rgba(255, 255, 255, .03);
+    --bs-table-hover-color: var(--ntm-text);
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.table thead th {
+    color: var(--ntm-muted);
+    font-size: .74rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.table td a:not(.btn) {
+    color: var(--ntm-text);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.table td a:not(.btn):hover {
+    color: var(--ntm-green);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: .35rem;
+}
+
+.actions form {
+    margin: 0;
+}
+
+/* Na Dashboardu su dvije tabele jedna pored druge, pa kolona takmičenja traži širok ekran */
+@media (max-width: 1699.98px) {
+    .compact-matches .col-competition {
+        display: none;
+    }
+}
+
+/* Obrasci */
+.form-control,
+.form-select {
+    background-color: var(--ntm-navy-900);
+    border-color: var(--ntm-line);
+    color: var(--ntm-text);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--ntm-navy-900);
+    border-color: var(--ntm-green);
+    box-shadow: 0 0 0 .2rem var(--ntm-green-soft);
+    color: var(--ntm-text);
+}
+
+.form-label {
+    margin-bottom: .3rem;
+    font-size: .88rem;
+    font-weight: 500;
+}
+
+.form-check-input:checked {
+    background-color: var(--ntm-green-dark);
+    border-color: var(--ntm-green-dark);
+}
+
+/* Oznake */
+.status-pill {
+    display: inline-block;
+    padding: .18rem .6rem;
+    border-radius: 999px;
+    font-size: .74rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-scheduled {
+    background: rgba(96, 165, 250, .15);
+    color: var(--ntm-blue);
+}
+
+.status-in_progress {
+    background: rgba(251, 191, 36, .15);
+    color: var(--ntm-amber);
+}
+
+.status-finished {
+    background: var(--ntm-green-soft);
+    color: var(--ntm-green);
+}
+
+.status-cancelled {
+    background: rgba(248, 113, 113, .15);
+    color: var(--ntm-danger);
+}
+
+.jersey {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--ntm-navy-700);
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.avatar {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--ntm-navy-700);
+    color: var(--ntm-muted);
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.avatar-lg {
+    width: 140px;
+    height: 140px;
+    font-size: 2.4rem;
+}
+
+/* Rezultat */
+.score-pill {
+    display: inline-block;
+    min-width: 58px;
+    padding: .15rem .55rem;
+    border-radius: 7px;
+    background: var(--ntm-navy-700);
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.scoreboard {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+
+.scoreboard .team-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.scoreboard .score {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+@media (max-width: 575.98px) {
+    .scoreboard .team-name {
+        font-size: .95rem;
+    }
+
+    .scoreboard .score {
+        font-size: 1.8rem;
+    }
+}
+
+/* Događaji */
+.event-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.event-row {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .65rem 1.15rem;
+    border-bottom: 1px solid var(--ntm-line);
+}
+
+.event-row:last-child {
+    border-bottom: 0;
+}
+
+.event-minute {
+    flex-shrink: 0;
+    width: 42px;
+    color: var(--ntm-green);
+    font-weight: 700;
+}
+
+.event-icon {
+    flex-shrink: 0;
+    font-size: 1.1rem;
+}
+
+.event-goal { color: var(--ntm-green); }
+.event-assist { color: var(--ntm-blue); }
+.event-yellow_card { color: var(--ntm-amber); }
+.event-red_card { color: var(--ntm-danger); }
+.event-substitution { color: #c4b5fd; }
+
+/* Teren */
+.pitch {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 68 / 92;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, .55);
+    border-radius: 8px;
+    background: repeating-linear-gradient(0deg, #15803d 0, #15803d 8.33%, #166f37 8.33%, #166f37 16.66%);
+}
+
+.pitch-line {
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, .5);
+}
+
+.pitch-halfway {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-width: 2px 0 0;
+}
+
+.pitch-circle {
+    top: 50%;
+    left: 50%;
+    width: 26%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pitch-box-top,
+.pitch-box-bottom {
+    left: 22%;
+    width: 56%;
+    height: 15%;
+}
+
+.pitch-box-top {
+    top: -2px;
+}
+
+.pitch-box-bottom {
+    bottom: -2px;
+}
+
+.pitch-goal-top,
+.pitch-goal-bottom {
+    left: 37%;
+    width: 26%;
+    height: 6%;
+}
+
+.pitch-goal-top {
+    top: -2px;
+}
+
+.pitch-goal-bottom {
+    bottom: -2px;
+}
+
+.pitch-player {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 16.5%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.pitch-shirt {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(30px, 8vw, 42px);
+    aspect-ratio: 1;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: var(--ntm-navy-950);
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .45);
+}
+
+.pitch-player.goalkeeper .pitch-shirt {
+    background: var(--ntm-amber);
+    color: var(--ntm-navy-950);
+}
+
+.pitch-player.empty .pitch-shirt {
+    border-style: dashed;
+    background: rgba(7, 14, 27, .35);
+    color: rgba(255, 255, 255, .85);
+    font-size: .65rem;
+}
+
+.pitch-captain {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--ntm-amber);
+    color: var(--ntm-navy-950);
+    font-size: .65rem;
+    font-weight: 800;
+}
+
+.pitch-name {
+    max-width: 100%;
+    margin-top: 3px;
+    padding: 0 4px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: rgba(7, 14, 27, .72);
+    color: #fff;
+    font-size: clamp(.6rem, 1.8vw, .76rem);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.slot-row {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: .5rem;
+}
+
+.slot-label {
+    padding: .3rem 0;
+    border-radius: 6px;
+    background: var(--ntm-navy-700);
+    color: var(--ntm-green);
+    font-size: .78rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.substitute-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: .35rem .9rem;
+}
+
+/* Prijava i registracija */
+.auth-page {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+    background:
+        radial-gradient(circle at 15% 15%, rgba(34, 197, 94, .16), transparent 42%),
+        radial-gradient(circle at 85% 85%, rgba(96, 165, 250, .13), transparent 42%),
+        var(--ntm-navy-950);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 2rem;
+    background: var(--ntm-navy-800);
+    border: 1px solid var(--ntm-line);
+    border-radius: 14px;
+}
+
+.empty-state {
+    padding: 2.5rem 1rem;
+    color: var(--ntm-muted);
+    text-align: center;
+}
+
+.empty-state i {
+    display: block;
+    margin-bottom: .5rem;
+    font-size: 2rem;
+}
+
+.modal-content {
+    background: var(--ntm-navy-800);
+    border: 1px solid var(--ntm-line);
+}
+
+/* Fotografije */
+.avatar-md {
+    width: 56px;
+    height: 56px;
+}
+
+.avatar-lg-coach {
+    width: 88px;
+    height: 88px;
+}
+
+img.avatar {
+    border: 2px solid var(--ntm-line);
+}
+
+.language-switcher .btn {
+    font-size: .75rem;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
+/* Detalji terena */
+.pitch-spot {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .7);
+    transform: translate(-50%, -50%);
+}
+
+.pitch-spot-center { top: 50%; left: 50%; }
+.pitch-spot-top { top: 10.5%; left: 50%; }
+.pitch-spot-bottom { top: 89.5%; left: 50%; }
+
+.pitch-arc-top,
+.pitch-arc-bottom {
+    left: 39%;
+    width: 22%;
+    height: 5%;
+    border-color: rgba(255, 255, 255, .5);
+}
+
+.pitch-arc-top {
+    top: 15%;
+    border-top: 0;
+    border-radius: 0 0 999px 999px;
+}
+
+.pitch-arc-bottom {
+    bottom: 15%;
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+}
+
+/* Fotografija igrača na terenu */
+.pitch-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.pitch-shirt:has(.pitch-photo) {
+    width: clamp(36px, 9vw, 58px);
+    background: var(--ntm-navy-700);
+}
+
+.pitch-name strong {
+    color: var(--ntm-green);
+}
+
+.pitch-player.goalkeeper .pitch-shirt {
+    border-color: var(--ntm-amber);
+    box-shadow: 0 0 0 2px rgba(251, 191, 36, .45), 0 2px 6px rgba(0, 0, 0, .45);
+}
+
+.pitch-player.goalkeeper .pitch-name strong {
+    color: var(--ntm-amber);
+}
+
+.pitch-captain {
+    width: auto;
+    min-width: 18px;
+    padding: 0 3px;
+    border-radius: 9px;
+    white-space: nowrap;
+}
+
+/* Taktička tabla */
+.tactics-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.tactics-formation {
+    min-width: 160px;
+}
+
+.pitch-board {
+    max-width: 640px;
+}
+
+#boardPlayers {
+    position: absolute;
+    inset: 0;
+}
+
+.board-player {
+    z-index: 1;
+    border-radius: 8px;
+    cursor: grab;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.board-player:focus-visible,
+.bench-player:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.board-player.is-selected {
+    z-index: 2;
+}
+
+.board-player.is-selected .pitch-shirt {
+    border-color: var(--ntm-green);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, .75), 0 0 16px rgba(255, 255, 255, .7);
+    transform: scale(1.1);
+}
+
+.board-player.is-drop-target .pitch-shirt {
+    border-color: var(--ntm-blue);
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, .8);
+}
+
+.board-player.misplaced .pitch-shirt {
+    border-style: dashed;
+    border-color: #fdba74;
+}
+
+.pitch-position {
+    margin-top: 1px;
+    padding: 0 3px;
+    border-radius: 3px;
+    background: rgba(7, 14, 27, .55);
+    color: #cbd5e1;
+    font-size: clamp(.5rem, 1.4vw, .62rem);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.tactics-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .35rem 1rem;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    vertical-align: -1px;
+}
+
+.legend-goalkeeper {
+    background: var(--ntm-amber);
+}
+
+.legend-misplaced {
+    border: 2px dashed #fdba74;
+}
+
+.bench-header {
+    cursor: pointer;
+}
+
+.bench-header.is-drop-target,
+.bench-list.is-drop-target {
+    background: rgba(96, 165, 250, .15);
+}
+
+.bench-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: .35rem;
+    max-height: 290px;
+    min-height: 62px;
+    padding: .55rem;
+    overflow-y: auto;
+}
+
+.bench-player {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    min-width: 0;
+    padding: .3rem .45rem;
+    border: 1px solid var(--ntm-line);
+    border-radius: 8px;
+    background: var(--ntm-navy-900);
+    cursor: grab;
+    user-select: none;
+}
+
+.bench-player .avatar {
+    pointer-events: none;
+}
+
+.bench-player .jersey {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    font-size: .76rem;
+}
+
+.bench-player.is-selected {
+    border-color: var(--ntm-green);
+    background: var(--ntm-green-soft);
+}
+
+.bench-player.is-drop-target {
+    border-color: var(--ntm-blue);
+}
+
+.bench-name {
+    flex-grow: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: .85rem;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.duty-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 145px;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .3rem;
+}
+
+.duty-name {
+    overflow: hidden;
+    font-size: .85rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alert-info {
+    --bs-alert-bg: rgba(96, 165, 250, .1);
+    --bs-alert-border-color: rgba(96, 165, 250, .3);
+    --bs-alert-color: #bfdbfe;
+}
+
+@media (max-width: 575.98px) {
+    .tactics-pitch-wrap {
+        padding: .35rem;
+    }
+}
+
+/* Zastave: okvir je stalan, a object-fit: contain čuva proporcije svake slike */
+.flag {
+    display: inline-block;
+    width: 24px;
+    height: 18px;
+    flex-shrink: 0;
+    border-radius: 2px;
+    object-fit: contain;
+    background: rgba(255, 255, 255, .06);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .18);
+    vertical-align: -3px;
+}
+
+.flag-md {
+    width: 36px;
+    height: 27px;
+}
+
+.flag-lg {
+    width: 56px;
+    height: 42px;
+}
+
+.flag-xl {
+    width: 112px;
+    height: 84px;
+}
+
+.match-teams {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .3rem;
+}
+
+.flag-editor {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: .9rem;
+    border: 1px solid var(--ntm-line);
+    border-radius: 10px;
+}
+
+/* Stadioni */
+.stadium-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.stadium-card-photo {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--ntm-navy-700);
+}
+
+.stadium-card-photo img,
+.stadium-hero,
+.stadium-thumb,
+.stadium-thumb-lg {
+    display: block;
+    object-fit: cover;
+}
+
+.stadium-card-photo img {
+    width: 100%;
+    height: 100%;
+    transition: transform .2s ease;
+}
+
+.stadium-card-photo:hover img {
+    transform: scale(1.04);
+}
+
+.stadium-card-photo .badge {
+    position: absolute;
+    top: .6rem;
+    left: .6rem;
+}
+
+.stadium-hero {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--ntm-line);
+    border-radius: 12px;
+}
+
+.stadium-thumb {
+    width: 84px;
+    height: 48px;
+    border-radius: 6px;
+}
+
+.stadium-thumb-lg {
+    width: 168px;
+    height: 94px;
+    border-radius: 8px;
+}
+
+.match-venue {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: .9rem 1.15rem;
+}
+
+/* Logotipi takmičenja: okvir je stalan, a object-fit: contain sprječava deformisanje */
+.competition-logo {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.competition-logo-md {
+    width: 36px;
+    height: 36px;
+}
+
+.competition-logo-xl {
+    width: 96px;
+    height: 96px;
+}
+
+.competition-card-logo {
+    display: grid;
+    place-items: center;
+    height: 140px;
+    padding: 1rem;
+    border-bottom: 1px solid var(--ntm-line);
+    background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, .08), transparent 70%);
+}
+
+.competition-card-logo .competition-logo {
+    width: 100%;
+    max-width: 220px;
+    height: 108px;
+}
+
+.logo-editor {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: .9rem;
+    border: 1px solid var(--ntm-line);
+    border-radius: 10px;
+}
+
+@media (max-width: 575.98px) {
+    .competition-logo-xl {
+        width: 72px;
+        height: 72px;
+    }
+}

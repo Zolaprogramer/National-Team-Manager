@@ -1,0 +1,15 @@
+target/
+uploads/
+application-local.properties
+
+# Eclipse
+.classpath
+.project
+.settings/
+.factorypath
+bin/
+
+# IntelliJ / VS Code
+.idea/
+*.iml
+.vscode/

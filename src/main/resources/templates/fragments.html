@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Izbor jezika -->
+<form th:fragment="languageSwitcher" th:action="@{/language}" method="post" class="language-switcher btn-group btn-group-sm"
+      role="group" th:aria-label="#{nav.language}">
+    <button type="submit" name="lang" value="sr" class="btn" lang="sr"
+            th:classappend="${#locale.language == 'en'} ? 'btn-outline-secondary' : 'btn-primary'">Srpski</button>
+    <button type="submit" name="lang" value="en" class="btn" lang="en"
+            th:classappend="${#locale.language == 'en'} ? 'btn-primary' : 'btn-outline-secondary'">English</button>
+</form>
+
+<!-- Poruka validacije za jedno polje obrasca -->
+<div th:fragment="fieldError(field)" class="invalid-feedback d-block"
+     th:if="${#fields.hasErrors(field)}" th:errors="*{__${field}__}"></div>
+
+<!-- Greške poslovnih pravila koje se ne odnose na jedno polje -->
+<div th:fragment="globalErrors" class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+    <span th:each="error : ${#fields.globalErrors()}" th:text="${error}"></span>
+</div>
+
+<!-- Kartica s jednim brojem -->
+<div th:fragment="statCard(icon, label, value)" class="stat-card">
+    <span class="stat-icon"><i class="bi" th:classappend="${icon}"></i></span>
+    <div>
+        <div class="stat-value" th:text="${value}"></div>
+        <div class="stat-label" th:text="${label}"></div>
+    </div>
+</div>
+
+<!-- Tabela utakmica, zajednička za više stranica -->
+<div th:fragment="matchTable(matches, emptyText)">
+    <div th:if="${#lists.isEmpty(matches)}" class="empty-state">
+        <i class="bi bi-calendar-x"></i>
+        <span th:text="${emptyText}"></span>
+    </div>
+    <div class="table-responsive" th:unless="${#lists.isEmpty(matches)}">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th th:text="#{match.date}"></th>
+                <th th:text="#{match.match}"></th>
+                <th class="text-center" th:text="#{match.result}"></th>
+                <th class="col-competition" th:text="#{match.competition}"></th>
+                <th th:text="#{match.status}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${matches}">
+                <td class="text-nowrap" th:text="${#temporals.format(m.kickoff, #messages.msg('format.dateTime'))}"></td>
+                <td>
+                    <a class="match-teams" th:href="@{/matches/{id}(id=${m.id})}">
+                        <img th:replace="~{fragments :: flag(${m.homeTeam}, '')}">
+                        <span th:text="${m.homeTeam.teamName}"></span>
+                        <span>-</span>
+                        <img th:replace="~{fragments :: flag(${m.awayTeam}, '')}">
+                        <span th:text="${m.awayTeam.teamName}"></span>
+                    </a>
+                    <div class="small text-secondary" th:text="${m.stadiumName}"></div>
+                </td>
+                <td class="text-center">
+                    <span class="score-pill" th:if="${m.status.hasStarted()}"
+                          th:text="${m.homeGoals} + ' : ' + ${m.awayGoals}"></span>
+                    <span class="text-secondary" th:unless="${m.status.hasStarted()}">-</span>
+                </td>
+                <td class="col-competition">
+                    <span class="d-inline-flex align-items-center gap-2" th:if="${m.competition != null}">
+                        <img th:replace="~{fragments :: competitionLogo(${m.competition}, '')}">
+                        <span th:text="${m.competition.name}"></span>
+                    </span>
+                    <span th:unless="${m.competition != null}" th:text="#{match.friendly}"></span>
+                </td>
+                <td><span class="status-pill" th:classappend="'status-' + ${#strings.toLowerCase(m.status.name())}"
+                          th:text="#{${m.status.messageKey}}"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Linije terena -->
+<th:block th:fragment="pitchMarkings">
+    <div class="pitch-line pitch-halfway"></div>
+    <div class="pitch-line pitch-circle"></div>
+    <div class="pitch-spot pitch-spot-center"></div>
+    <div class="pitch-line pitch-box-top"></div>
+    <div class="pitch-line pitch-goal-top"></div>
+    <div class="pitch-line pitch-arc-top"></div>
+    <div class="pitch-spot pitch-spot-top"></div>
+    <div class="pitch-line pitch-box-bottom"></div>
+    <div class="pitch-line pitch-goal-bottom"></div>
+    <div class="pitch-line pitch-arc-bottom"></div>
+    <div class="pitch-spot pitch-spot-bottom"></div>
+</th:block>
+
+<!-- Zastava reprezentacije; slika zadržava proporcije unutar okvira -->
+<img th:fragment="flag(team, size)" class="flag" th:classappend="${size}" th:alt="${team.countryName}" th:title="${team.countryName}"
+     th:with="flagUrl=${@countryFlagService.urlOf(team)}" th:src="@{${flagUrl}}">
+
+<!-- Logo takmičenja; bez logotipa se prikazuje podrazumijevana slika -->
+<img th:fragment="competitionLogo(c, size)" class="competition-logo" th:classappend="${size}" th:alt="${c.name}" th:title="${c.name}"
+     th:src="${c.logoPath != null} ? @{/competitions/{id}/logo(id=${c.id}, v=${#strings.substringAfter(c.logoPath, '/')})} : @{/img/competition-default.svg}">
+
+<!-- Kartica stadiona -->
+<article th:fragment="stadiumCard(s)" class="panel stadium-card h-100">
+    <a class="stadium-card-photo" th:href="@{/stadiums/{id}(id=${s.id})}">
+        <img th:alt="${s.name}" th:src="${s.photoFileName != null} ? @{/stadiums/{id}/photo(id=${s.id})} : @{/img/stadium-default.svg}">
+        <span class="badge text-bg-success" th:if="${s.mainStadium}" th:text="#{stadium.main}"></span>
+    </a>
+    <div class="panel-body">
+        <h2 class="h6 mb-1"><a class="text-reset text-decoration-none" th:href="@{/stadiums/{id}(id=${s.id})}" th:text="${s.name}"></a></h2>
+        <div class="small text-secondary mb-2" th:text="${s.city} + ', ' + ${s.country}"></div>
+        <div class="d-flex flex-wrap justify-content-between gap-2 small">
+            <span><i class="bi bi-people-fill me-1"></i><span th:text="${#numbers.formatInteger(s.capacity, 1, 'POINT')}"></span></span>
+            <span th:text="#{${s.surface.messageKey}}"></span>
+        </div>
+        <div class="small mt-2">
+            <img th:replace="~{fragments :: flag(${s.team}, '')}"> <span th:text="${s.team.teamName}"></span>
+        </div>
+    </div>
+</article>
+
+<!-- Kartica selektora -->
+<div th:fragment="coachCard(team)" class="d-flex align-items-center gap-3">
+    <img class="avatar avatar-md" th:alt="${team.coach}"
+         th:src="${team.coachPhotoFileName != null} ? @{/teams/{id}/coach-photo(id=${team.id})} : @{/img/coach-avatar.svg}">
+    <div class="min-w-0">
+        <div class="stat-label" th:text="#{team.coach}"></div>
+        <div class="fw-semibold" th:text="${team.coach}"></div>
+        <a class="small" th:href="@{/teams/{id}(id=${team.id})}">
+            <img th:replace="~{fragments :: flag(${team}, '')}"> <span th:text="${team.teamName}"></span>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

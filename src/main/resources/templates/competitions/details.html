@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{competition.competition}, ~{::#content})}">
+<body>
+<div id="content" th:with="canManage=${!competition.shared or currentUser.admin}">
+    <div class="page-header">
+        <div class="d-flex align-items-center gap-3">
+            <img th:replace="~{fragments :: competitionLogo(${competition}, 'competition-logo-xl')}">
+            <div>
+                <h1>
+                    <span th:text="${competition.name}"></span>
+                    <span class="badge text-bg-info fs-6 align-middle" th:if="${competition.shared}" th:text="#{competition.official}"></span>
+                </h1>
+                <div class="text-secondary"
+                     th:text="#{${competition.type.messageKey}} + ' · ' + ${competition.season} + ' · ' + ${#temporals.format(competition.startDate, #messages.msg('format.date'))} + ' - ' + ${#temporals.format(competition.endDate, #messages.msg('format.date'))}"></div>
+            </div>
+        </div>
+        <div class="actions" th:if="${canManage}">
+            <a class="btn btn-outline-secondary" th:href="@{/competitions/{id}/edit(id=${competition.id})}"><i class="bi bi-pencil"></i> <span th:text="#{common.edit}"></span></a>
+            <form th:if="${currentUser.admin and competition.logoPath != null}" th:action="@{/competitions/{id}/logo/delete(id=${competition.id})}" method="post"
+                  th:data-confirm="#{competition.confirmDeleteLogo}">
+                <button type="submit" class="btn btn-outline-warning"><i class="bi bi-image"></i> <span th:text="#{competition.deleteLogo}"></span></button>
+            </form>
+            <form th:action="@{/competitions/{id}/delete(id=${competition.id})}" method="post"
+                  th:data-confirm="${competition.shared} ? #{competition.confirmDeleteShared(${competition.name})} : #{competition.confirmDelete(${competition.name})}">
+                <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> <span th:text="#{common.delete}"></span></button>
+            </form>
+        </div>
+    </div>
+
+    <section class="panel">
+        <div class="panel-header"><h2><i class="bi bi-calendar-event-fill me-1"></i> <span th:text="#{nav.matches}"></span></h2></div>
+        <div th:replace="~{fragments :: matchTable(${matches}, #{competition.noMatches})}"></div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{player.player}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <div>
+            <h1 th:text="${playerId != null} ? #{player.edit} : #{player.new}"></h1>
+            <div class="text-secondary" th:text="${teamName}"></div>
+        </div>
+    </div>
+
+    <section class="panel" style="max-width: 860px">
+        <div class="panel-body">
+            <form th:action="@{${formAction}}" th:object="${player}" method="post" enctype="multipart/form-data" novalidate>
+                <div th:replace="~{fragments :: globalErrors}"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="firstName" th:text="#{player.firstName}"></label>
+                        <input class="form-control" th:field="*{firstName}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('firstName')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="lastName" th:text="#{player.lastName}"></label>
+                        <input class="form-control" th:field="*{lastName}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('lastName')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="birthDate" th:text="#{player.birthDate}"></label>
+                        <input class="form-control" type="date" th:field="*{birthDate}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('birthDate')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="nationality" th:text="#{player.nationality}"></label>
+                        <input class="form-control" th:field="*{nationality}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('nationality')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="position" th:text="#{player.position}"></label>
+                        <select class="form-select" th:field="*{position}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.select}"></option>
+                            <option th:each="p : ${positions}" th:value="${p}" th:text="#{${p.messageKey}}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('position')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="jerseyNumber" th:text="#{player.jerseyRange}"></label>
+                        <input class="form-control" type="number" min="1" max="99" th:field="*{jerseyNumber}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('jerseyNumber')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="heightCm" th:text="#{player.height}"></label>
+                        <input class="form-control" type="number" th:field="*{heightCm}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('heightCm')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="club" th:text="#{player.clubOptional}"></label>
+                        <input class="form-control" th:field="*{club}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('club')}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="photo" th:text="#{player.photoHint}"></label>
+                        <input class="form-control" type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp">
+                        <div class="form-check mt-2" th:if="${hasPhoto}">
+                            <input class="form-check-input" type="checkbox" th:field="*{removePhoto}">
+                            <label class="form-check-label" th:for="${#ids.prev('removePhoto')}" th:text="#{player.removePhoto}"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <span th:text="#{common.save}"></span></button>
+                    <a class="btn btn-outline-secondary" th:href="@{${cancelUrl}}" th:text="#{common.cancel}"></a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+</body>
+</html>

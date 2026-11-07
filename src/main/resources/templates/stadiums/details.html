@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{stadium.stadium}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <div>
+            <h1>
+                <span th:text="${stadium.name}"></span>
+                <span class="badge text-bg-success fs-6 align-middle" th:if="${stadium.mainStadium}" th:text="#{stadium.main}"></span>
+            </h1>
+            <a th:href="@{/teams/{id}(id=${stadium.team.id})}">
+                <img th:replace="~{fragments :: flag(${stadium.team}, '')}"> <span th:text="${stadium.team.teamName}"></span>
+            </a>
+        </div>
+        <div class="actions">
+            <a class="btn btn-outline-secondary" th:href="@{/stadiums/{id}/edit(id=${stadium.id})}"><i class="bi bi-pencil"></i> <span th:text="#{common.edit}"></span></a>
+            <form th:action="@{/stadiums/{id}/delete(id=${stadium.id})}" method="post"
+                  th:data-confirm="#{stadium.confirmDelete(${stadium.name})}">
+                <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> <span th:text="#{common.delete}"></span></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-7">
+            <img class="stadium-hero" th:alt="${stadium.name}"
+                 th:src="${stadium.photoFileName != null} ? @{/stadiums/{id}/photo(id=${stadium.id})} : @{/img/stadium-default.svg}">
+        </div>
+        <div class="col-lg-5">
+            <section class="panel h-100">
+                <div class="panel-header"><h2 th:text="#{team.basicInfo}"></h2></div>
+                <div class="panel-body">
+                    <dl class="row mb-0">
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{stadium.city}"></dt><dd class="col-7" th:text="${stadium.city}"></dd>
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{stadium.country}"></dt><dd class="col-7" th:text="${stadium.country}"></dd>
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{stadium.address}"></dt><dd class="col-7" th:text="${stadium.address}"></dd>
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{stadium.capacity}"></dt><dd class="col-7 fw-bold" th:text="${#numbers.formatInteger(stadium.capacity, 1, 'POINT')}"></dd>
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{stadium.builtYear}"></dt><dd class="col-7" th:text="${stadium.builtYear}"></dd>
+                        <dt class="col-5 fw-normal text-secondary" th:text="#{stadium.surface}"></dt><dd class="col-7" th:text="#{${stadium.surface.messageKey}}"></dd>
+                    </dl>
+                    <p class="mb-0 mt-3" style="white-space: pre-line" th:if="${stadium.description}" th:text="${stadium.description}"></p>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+</body>
+</html>

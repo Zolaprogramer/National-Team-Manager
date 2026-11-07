@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" th:fragment="page(pageTitle, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle} + ' | National Team Manager'">National Team Manager</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" th:aria-label="#{nav.main}">
+        <div class="offcanvas-body">
+            <a class="brand" th:href="@{/dashboard}">
+                <span class="brand-mark"><i class="bi bi-trophy-fill"></i></span>
+                <span>National Team<small>Manager</small></span>
+            </a>
+            <nav class="side-nav">
+                <a th:href="@{/dashboard}" th:classappend="${#strings.startsWith(currentPath, '/dashboard')} ? 'active'">
+                    <i class="bi bi-speedometer2"></i> <span th:text="#{nav.dashboard}"></span></a>
+                <a th:href="@{/teams}" th:classappend="${#strings.startsWith(currentPath, '/teams')} ? 'active'">
+                    <i class="bi bi-flag-fill"></i> <span th:text="#{nav.teams}"></span></a>
+                <a th:href="@{/players}" th:classappend="${#strings.startsWith(currentPath, '/players')} ? 'active'">
+                    <i class="bi bi-people-fill"></i> <span th:text="#{nav.players}"></span></a>
+                <a th:href="@{/matches}" th:classappend="${#strings.startsWith(currentPath, '/matches')} ? 'active'">
+                    <i class="bi bi-calendar-event-fill"></i> <span th:text="#{nav.matches}"></span></a>
+                <a th:href="@{/stadiums}" th:classappend="${#strings.startsWith(currentPath, '/stadiums')} ? 'active'">
+                    <i class="bi bi-building-fill"></i> <span th:text="#{nav.stadiums}"></span></a>
+                <a th:href="@{/competitions}" th:classappend="${#strings.startsWith(currentPath, '/competitions')} ? 'active'">
+                    <i class="bi bi-award-fill"></i> <span th:text="#{nav.competitions}"></span></a>
+                <a th:href="@{/statistics}" th:classappend="${#strings.startsWith(currentPath, '/statistics')} ? 'active'">
+                    <i class="bi bi-bar-chart-fill"></i> <span th:text="#{nav.statistics}"></span></a>
+            </nav>
+            <div class="mb-3 d-none d-lg-block">
+                <div th:replace="~{fragments :: languageSwitcher}"></div>
+            </div>
+            <div class="side-user">
+                <div class="name" th:text="${currentUser.fullName}"></div>
+                <div class="small text-secondary mb-2">
+                    <span th:text="'@' + ${currentUser.username}"></span>
+                    <span class="badge text-bg-warning ms-1" th:if="${currentUser.admin}" th:text="#{role.admin}"></span>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
+                        <i class="bi bi-box-arrow-right"></i> <span th:text="#{nav.logout}"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <div class="app-main">
+        <div class="topbar d-lg-none">
+            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#sidebar" aria-controls="sidebar" th:aria-label="#{nav.openMenu}">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="fw-bold flex-grow-1">NTM</span>
+            <div th:replace="~{fragments :: languageSwitcher}"></div>
+        </div>
+        <main class="page-body">
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                <span th:text="#{${successMessage}}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" th:aria-label="#{common.close}"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" th:aria-label="#{common.close}"></button>
+            </div>
+            <div th:replace="${content}"></div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="confirmModalTitle" th:text="#{confirm.title}"></h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{common.close}"></button>
+            </div>
+            <div class="modal-body" id="confirmModalMessage"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" th:text="#{common.cancel}"></button>
+                <button type="button" class="btn btn-danger" id="confirmModalButton" th:text="#{confirm.proceed}"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

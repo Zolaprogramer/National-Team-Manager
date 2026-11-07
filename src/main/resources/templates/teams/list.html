@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{nav.teams}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="#{nav.teams}"></h1>
+        <a class="btn btn-primary" th:href="@{/teams/new}"><i class="bi bi-plus-lg"></i> <span th:text="#{team.new}"></span></a>
+    </div>
+
+    <section class="panel">
+        <div th:if="${#lists.isEmpty(summaries)}" class="empty-state">
+            <i class="bi bi-flag"></i>
+            <span th:text="#{team.emptyHint}"></span>
+        </div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(summaries)}">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th th:text="#{team.team}"></th><th th:text="#{team.confederation}"></th><th th:text="#{team.coach}"></th>
+                    <th class="text-center" th:text="#{nav.players}"></th><th class="text-center" th:text="#{team.record}"></th><th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${summaries}">
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img th:replace="~{fragments :: flag(${s.team}, 'flag-md')}">
+                            <div>
+                                <a th:href="@{/teams/{id}(id=${s.team.id})}" th:text="${s.team.teamName}"></a>
+                                <div class="small text-secondary" th:text="${s.team.countryName}"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${s.team.confederation.name()}"></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <img class="avatar" th:alt="${s.team.coach}"
+                                 th:src="${s.team.coachPhotoFileName != null} ? @{/teams/{id}/coach-photo(id=${s.team.id})} : @{/img/coach-avatar.svg}">
+                            <span th:text="${s.team.coach}"></span>
+                        </div>
+                    </td>
+                    <td class="text-center" th:text="${s.statistics.playerCount}"></td>
+                    <td class="text-center" th:text="${s.statistics.wins} + '-' + ${s.statistics.draws} + '-' + ${s.statistics.losses}"></td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/teams/{id}/edit(id=${s.team.id})}"
+                               th:title="#{common.edit}" th:aria-label="#{common.edit}"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/teams/{id}/delete(id=${s.team.id})}" method="post"
+                                  th:data-confirm="#{team.confirmDelete(${s.team.teamName})}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" th:title="#{common.delete}" th:aria-label="#{common.delete}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+</body>
+</html>

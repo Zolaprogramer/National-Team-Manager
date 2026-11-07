@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{stadium.stadium}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="${stadiumId != null} ? #{stadium.edit} : #{stadium.new}"></h1>
+    </div>
+
+    <section class="panel" th:if="${#lists.isEmpty(teams)}" style="max-width: 760px">
+        <div class="empty-state">
+            <i class="bi bi-flag"></i>
+            <p th:text="#{stadium.createTeamFirst}"></p>
+            <a class="btn btn-primary" th:href="@{/teams/new}" th:text="#{team.new}"></a>
+        </div>
+    </section>
+
+    <section class="panel" th:unless="${#lists.isEmpty(teams)}" style="max-width: 860px">
+        <div class="panel-body">
+            <form th:action="@{${formAction}}" th:object="${stadium}" method="post" enctype="multipart/form-data" novalidate>
+                <div th:replace="~{fragments :: globalErrors}"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="teamId" th:text="#{team.team}"></label>
+                        <select class="form-select" th:field="*{teamId}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.select}"></option>
+                            <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('teamId')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="name" th:text="#{stadium.name}"></label>
+                        <input class="form-control" th:field="*{name}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('name')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="city" th:text="#{stadium.city}"></label>
+                        <input class="form-control" th:field="*{city}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('city')}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="country" th:text="#{stadium.country}"></label>
+                        <input class="form-control" th:field="*{country}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('country')}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="address" th:text="#{stadium.address}"></label>
+                        <input class="form-control" th:field="*{address}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('address')}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="capacity" th:text="#{stadium.capacity}"></label>
+                        <input class="form-control" type="number" min="1" th:field="*{capacity}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('capacity')}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="builtYear" th:text="#{stadium.builtYear}"></label>
+                        <input class="form-control" type="number" th:field="*{builtYear}" th:errorclass="is-invalid">
+                        <div th:replace="~{fragments :: fieldError('builtYear')}"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="surface" th:text="#{stadium.surface}"></label>
+                        <select class="form-select" th:field="*{surface}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.select}"></option>
+                            <option th:each="s : ${surfaces}" th:value="${s}" th:text="#{${s.messageKey}}"></option>
+                        </select>
+                        <div th:replace="~{fragments :: fieldError('surface')}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="description" th:text="#{team.description}"></label>
+                        <textarea class="form-control" rows="4" th:field="*{description}" th:errorclass="is-invalid"></textarea>
+                        <div th:replace="~{fragments :: fieldError('description')}"></div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="photo" th:text="#{player.photoHint}"></label>
+                        <input class="form-control" type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp">
+                        <div class="d-flex align-items-center gap-2 mt-2" th:if="${hasPhoto}">
+                            <img class="stadium-thumb" alt="" th:src="@{/stadiums/{id}/photo(id=${stadiumId})}">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" th:field="*{removePhoto}">
+                                <label class="form-check-label" th:for="${#ids.prev('removePhoto')}" th:text="#{player.removePhoto}"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" th:field="*{mainStadium}">
+                            <label class="form-check-label" th:for="${#ids.prev('mainStadium')}" th:text="#{stadium.markMain}"></label>
+                        </div>
+                        <div class="form-text" th:text="#{stadium.mainHint}"></div>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> <span th:text="#{common.save}"></span></button>
+                    <a class="btn btn-outline-secondary" th:href="@{${cancelUrl}}" th:text="#{common.cancel}"></a>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{lineup.lineup}, ~{::#content})}">
+<body>
+<div id="content" th:with="m=${editor.match}, team=${editor.team}, lineup=${view.lineup}, settings=${view.lineup.settings}">
+    <div class="page-header">
+        <div>
+            <h1><img th:replace="~{fragments :: flag(${team}, 'flag-md')}"> <span th:text="#{lineup.title(${team.teamName})}"></span></h1>
+            <a th:href="@{/matches/{id}(id=${m.id})}" th:text="${m.homeTeam.teamName} + ' - ' + ${m.awayTeam.teamName}"></a>
+        </div>
+        <div class="actions flex-wrap">
+            <a class="btn btn-primary" th:if="${m.status.name() != 'CANCELLED'}"
+               th:href="@{/matches/{id}/lineups/{teamId}/tactics(id=${m.id}, teamId=${team.id})}"><i class="bi bi-easel-fill"></i> <span th:text="#{tactics.title}"></span></a>
+            <a class="btn btn-outline-secondary" th:if="${m.status.name() != 'CANCELLED'}"
+               th:href="@{/matches/{id}/lineups/{teamId}/edit(id=${m.id}, teamId=${team.id})}"><i class="bi bi-pencil"></i> <span th:text="#{common.edit}"></span></a>
+            <form th:action="@{/matches/{id}/lineups/{teamId}/delete(id=${m.id}, teamId=${team.id})}" method="post"
+                  th:data-confirm="#{lineup.confirmDelete}">
+                <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> <span th:text="#{common.delete}"></span></button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-7">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2><span th:text="#{lineup.formation}"></span> <span class="text-success" th:text="${lineup.formation.label}"></span></h2>
+                </div>
+                <div class="panel-body">
+                    <div class="pitch">
+                        <th:block th:replace="~{fragments :: pitchMarkings}"></th:block>
+                        <div class="pitch-player" th:each="s : ${view.starters}"
+                             th:classappend="${s.player.goalkeeper} ? 'goalkeeper'"
+                             th:style="|left: ${s.slot.x}%; top: ${s.slot.y}%|">
+                            <div class="pitch-shirt">
+                                <img class="pitch-photo" th:alt="${s.player.fullName}"
+                                     th:src="${s.player.photoFileName != null} ? @{/players/{id}/photo(id=${s.player.id})} : @{/img/player-silhouette.svg}">
+                                <span class="pitch-captain" th:if="${s.captain}" th:title="#{lineup.captain}" th:text="#{tactics.badgeCaptain}"></span>
+                            </div>
+                            <div class="pitch-name" th:title="${s.player.fullName}">
+                                <strong th:text="${s.player.jerseyNumber}"></strong> <span th:text="${s.player.lastName}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-5">
+            <section class="panel mb-3">
+                <div class="panel-header"><h2 th:text="#{tactics.settings}"></h2></div>
+                <div class="panel-body">
+                    <dl class="row mb-0 small">
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{lineup.captain}"></dt><dd class="col-6 fw-semibold" th:text="${lineup.captain.fullName}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.penaltyTaker}"></dt><dd class="col-6" th:text="${lineup.penaltyTaker != null} ? ${lineup.penaltyTaker.fullName} : '-'"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.freeKickTaker}"></dt><dd class="col-6" th:text="${lineup.freeKickTaker != null} ? ${lineup.freeKickTaker.fullName} : '-'"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.cornerTaker}"></dt><dd class="col-6" th:text="${lineup.cornerTaker != null} ? ${lineup.cornerTaker.fullName} : '-'"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.playStyle}"></dt><dd class="col-6" th:text="#{${settings.playStyle.messageKey}}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.mentality}"></dt><dd class="col-6" th:text="#{${settings.mentality.messageKey}}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.playWidth}"></dt><dd class="col-6" th:text="#{${settings.playWidth.messageKey}}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.playTempo}"></dt><dd class="col-6" th:text="#{${settings.playTempo.messageKey}}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.pressing}"></dt><dd class="col-6" th:text="#{${settings.pressing.messageKey}}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.defensiveLine}"></dt><dd class="col-6" th:text="#{${settings.defensiveLine.messageKey}}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.passingStyle}"></dt><dd class="col-6" th:text="#{${settings.passingStyle.messageKey}}"></dd>
+                        <dt class="col-6 fw-normal text-secondary" th:text="#{tactics.attackDirection}"></dt><dd class="col-6" th:text="#{${settings.attackDirection.messageKey}}"></dd>
+                    </dl>
+                    <div class="mt-2" style="white-space: pre-line" th:if="${lineup.tactic}" th:text="${lineup.tactic}"></div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header"><h2><span th:text="#{lineup.substitutes}"></span> (<span th:text="${#lists.size(view.substitutes)}"></span>)</h2></div>
+                <div th:if="${#lists.isEmpty(view.substitutes)}" class="empty-state" th:text="#{lineup.noSubstitutes}"></div>
+                <div class="table-responsive" th:unless="${#lists.isEmpty(view.substitutes)}">
+                    <table class="table">
+                        <tbody>
+                        <tr th:each="p : ${view.substitutes}">
+                            <td style="width: 54px">
+                                <img class="avatar" th:alt="${p.fullName}"
+                                     th:src="${p.photoFileName != null} ? @{/players/{id}/photo(id=${p.id})} : @{/img/player-silhouette.svg}">
+                            </td>
+                            <td><strong th:text="${p.jerseyNumber}"></strong> <span th:text="${p.fullName}"></span></td>
+                            <td class="text-end text-secondary" th:text="#{${p.position.messageKey}}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+</body>
+</html>

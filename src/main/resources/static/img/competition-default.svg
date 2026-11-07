@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Competition">
+  <circle cx="32" cy="32" r="31" fill="#1a2c49"/>
+  <path d="M21 14h22v8c0 8-5 14-11 14s-11-6-11-14z" fill="#93a4bd"/>
+  <path d="M21 17h-6c0 7 3 11 8 12M43 17h6c0 7-3 11-8 12" fill="none" stroke="#93a4bd" stroke-width="3"/>
+  <path d="M29 36h6v8h-6z" fill="#93a4bd"/>
+  <path d="M23 44h18v6H23z" fill="#93a4bd"/>
+</svg>

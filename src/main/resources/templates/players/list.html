@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{nav.players}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="#{nav.players}"></h1>
+        <div class="dropdown" th:unless="${#lists.isEmpty(teams)}">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-plus-lg"></i> <span th:text="#{player.add}"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li th:each="t : ${teams}">
+                    <a class="dropdown-item" th:unless="${fullTeamIds.contains(t.id)}"
+                       th:href="@{/teams/{id}/players/new(id=${t.id})}" th:text="${t.teamName}"></a>
+                    <span class="dropdown-item disabled" th:if="${fullTeamIds.contains(t.id)}" aria-disabled="true"
+                          th:text="${t.teamName} + ' (' + ${maxPlayers} + '/' + ${maxPlayers} + ')'"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <section class="panel mb-3">
+        <div class="panel-body">
+            <form th:action="@{/players}" th:object="${search}" method="get" class="row g-2 align-items-end">
+                <div class="col-sm-6 col-lg-2">
+                    <label class="form-label" for="firstName" th:text="#{player.firstName}"></label>
+                    <input class="form-control" th:field="*{firstName}">
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <label class="form-label" for="lastName" th:text="#{player.lastName}"></label>
+                    <input class="form-control" th:field="*{lastName}">
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <label class="form-label" for="position" th:text="#{player.position}"></label>
+                    <select class="form-select" th:field="*{position}">
+                        <option value="" th:text="#{common.allFem}"></option>
+                        <option th:each="p : ${positions}" th:value="${p}" th:text="#{${p.messageKey}}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <label class="form-label" for="jerseyNumber" th:text="#{player.jersey}"></label>
+                    <input class="form-control" type="number" min="1" max="99" th:field="*{jerseyNumber}">
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <label class="form-label" for="teamId" th:text="#{team.team}"></label>
+                    <select class="form-select" th:field="*{teamId}">
+                        <option value="" th:text="#{common.allFem}"></option>
+                        <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-6 col-lg-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-search"></i> <span th:text="#{common.search}"></span></button>
+                    <a class="btn btn-outline-secondary" th:href="@{/players}" th:title="#{common.reset}" th:aria-label="#{common.reset}"><i class="bi bi-x-lg"></i></a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:if="${#lists.isEmpty(players)}" class="empty-state">
+            <i class="bi bi-search"></i>
+            <span th:text="${#lists.isEmpty(teams)} ? #{player.createTeamFirst} : #{player.noResults}"></span>
+        </div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(players)}">
+            <table class="table table-hover">
+                <thead>
+                <tr><th th:text="#{player.numberShort}"></th><th th:text="#{player.player}"></th><th th:text="#{team.team}"></th><th th:text="#{player.position}"></th><th th:text="#{player.club}"></th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${players}">
+                    <td><span class="jersey" th:text="${p.jerseyNumber}"></span></td>
+                    <td><a th:href="@{/players/{id}(id=${p.id})}" th:text="${p.fullName}"></a></td>
+                    <td th:text="${p.team.teamName}"></td>
+                    <td th:text="#{${p.position.messageKey}}"></td>
+                    <td th:text="${p.club} ?: '-'"></td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/players/{id}/edit(id=${p.id})}"
+                               th:title="#{common.edit}" th:aria-label="#{common.edit}"><i class="bi bi-pencil"></i></a>
+                            <form th:action="@{/players/{id}/delete(id=${p.id})}" method="post"
+                                  th:data-confirm="#{player.confirmDelete(${p.fullName})}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" th:title="#{common.delete}" th:aria-label="#{common.delete}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+</body>
+</html>

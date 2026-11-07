@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{nav.stadiums}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="#{nav.stadiums}"></h1>
+        <a class="btn btn-primary" th:unless="${#lists.isEmpty(teams)}" th:href="@{/stadiums/new(teamId=${selectedTeamId})}">
+            <i class="bi bi-plus-lg"></i> <span th:text="#{stadium.new}"></span>
+        </a>
+    </div>
+
+    <section class="panel mb-3" th:unless="${#lists.isEmpty(teams)}">
+        <div class="panel-body">
+            <form th:action="@{/stadiums}" method="get" class="row g-2 align-items-end">
+                <div class="col-sm-6 col-lg-4">
+                    <label class="form-label" for="teamFilter" th:text="#{team.team}"></label>
+                    <select class="form-select" id="teamFilter" name="teamId">
+                        <option value="" th:text="#{common.allFem}"></option>
+                        <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}" th:selected="${t.id == selectedTeamId}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-4 col-lg-2">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> <span th:text="#{common.filter}"></span></button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel" th:if="${#lists.isEmpty(stadiums)}">
+        <div class="empty-state">
+            <i class="bi bi-building"></i>
+            <span th:text="${#lists.isEmpty(teams)} ? #{stadium.createTeamFirst} : #{stadium.none}"></span>
+        </div>
+    </section>
+
+    <div class="row g-3" th:unless="${#lists.isEmpty(stadiums)}">
+        <div class="col-sm-6 col-xl-4" th:each="s : ${stadiums}">
+            <div th:replace="~{fragments :: stadiumCard(${s})}"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{nav.dashboard}, ~{::#content})}">
+<body>
+<div id="content" th:with="stats=${dashboard.statistics}">
+    <section class="welcome">
+        <h1 th:text="#{dashboard.welcome(${currentUser.fullName})}"></h1>
+        <p class="text-secondary mb-3" th:text="#{dashboard.subtitle}"></p>
+        <a class="btn btn-primary btn-sm" th:href="@{/matches/new}"><i class="bi bi-plus-lg"></i> <span th:text="#{match.new}"></span></a>
+        <a class="btn btn-outline-light btn-sm" th:href="@{/teams/new}"><i class="bi bi-flag"></i> <span th:text="#{team.new}"></span></a>
+    </section>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3"><div th:replace="~{fragments :: statCard('bi-flag-fill', #{stats.teams}, ${stats.teamCount})}"></div></div>
+        <div class="col-6 col-xl-3"><div th:replace="~{fragments :: statCard('bi-people-fill', #{stats.players}, ${stats.playerCount})}"></div></div>
+        <div class="col-6 col-xl-3"><div th:replace="~{fragments :: statCard('bi-check2-circle', #{stats.played}, ${stats.playedCount})}"></div></div>
+        <div class="col-6 col-xl-3"><div th:replace="~{fragments :: statCard('bi-bullseye', #{stats.goals}, ${stats.goalsScored})}"></div></div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-xl-6">
+            <section class="panel h-100 compact-matches">
+                <div class="panel-header">
+                    <h2><i class="bi bi-clock-history me-1"></i> <span th:text="#{dashboard.recentResults}"></span></h2>
+                    <a class="small" th:href="@{/matches(view='finished')}" th:text="#{dashboard.allFinished}"></a>
+                </div>
+                <div th:replace="~{fragments :: matchTable(${dashboard.recentResults}, #{dashboard.noResults})}"></div>
+            </section>
+        </div>
+        <div class="col-xl-6">
+            <section class="panel h-100 compact-matches">
+                <div class="panel-header">
+                    <h2><i class="bi bi-calendar-event me-1"></i> <span th:text="#{dashboard.upcoming}"></span></h2>
+                    <a class="small" th:href="@{/matches(view='upcoming')}" th:text="#{dashboard.allUpcoming}"></a>
+                </div>
+                <div th:replace="~{fragments :: matchTable(${dashboard.upcomingMatches}, #{dashboard.noUpcoming})}"></div>
+            </section>
+        </div>
+    </div>
+
+    <section class="panel mb-4" th:unless="${#lists.isEmpty(dashboard.teams)}">
+        <div class="panel-header"><h2><i class="bi bi-person-badge-fill me-1"></i> <span th:text="#{dashboard.coaches}"></span></h2></div>
+        <div class="panel-body">
+            <div class="row g-3">
+                <div class="col-sm-6 col-xl-4" th:each="team : ${dashboard.teams}">
+                    <div th:replace="~{fragments :: coachCard(${team})}"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <h2><i class="bi bi-bar-chart-fill me-1"></i> <span th:text="#{dashboard.statsOverview}"></span></h2>
+            <a class="small" th:href="@{/statistics}" th:text="#{dashboard.detailedStats}"></a>
+        </div>
+        <div class="panel-body">
+            <div class="row g-3">
+                <div class="col-sm-4">
+                    <div class="stat-label" th:text="#{dashboard.record}"></div>
+                    <div class="fs-5 fw-bold" th:text="${stats.wins} + ' / ' + ${stats.draws} + ' / ' + ${stats.losses}"></div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="stat-label" th:text="#{stats.bestScorer}"></div>
+                    <div class="fs-5 fw-bold" th:if="${stats.bestScorer() != null}"
+                         th:text="${stats.bestScorer().playerName} + ' (' + ${stats.bestScorer().goals} + ')'"></div>
+                    <div class="text-secondary" th:if="${stats.bestScorer() == null}" th:text="#{dashboard.noGoals}"></div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="stat-label" th:text="#{stats.mostAppearances}"></div>
+                    <div class="fs-5 fw-bold" th:if="${stats.mostCapped() != null}"
+                         th:text="${stats.mostCapped().playerName} + ' (' + ${stats.mostCapped().appearances} + ')'"></div>
+                    <div class="text-secondary" th:if="${stats.mostCapped() == null}" th:text="#{dashboard.noAppearances}"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

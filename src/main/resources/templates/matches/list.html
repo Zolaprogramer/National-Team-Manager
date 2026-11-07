@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(#{nav.matches}, ~{::#content})}">
+<body>
+<div id="content">
+    <div class="page-header">
+        <h1 th:text="#{nav.matches}"></h1>
+        <a class="btn btn-primary" th:href="@{/matches/new}"><i class="bi bi-plus-lg"></i> <span th:text="#{match.new}"></span></a>
+    </div>
+
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${filter.view == null} ? 'active'" th:href="@{/matches}" th:text="#{common.allFem}"></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${filter.view == 'upcoming'} ? 'active'" th:href="@{/matches(view='upcoming')}" th:text="#{match.tabUpcoming}"></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${filter.view == 'finished'} ? 'active'" th:href="@{/matches(view='finished')}" th:text="#{match.tabFinished}"></a>
+        </li>
+    </ul>
+
+    <section class="panel mb-3">
+        <div class="panel-body">
+            <form th:action="@{/matches}" th:object="${filter}" method="get" class="row g-2 align-items-end">
+                <input type="hidden" name="view" th:if="${filter.view != null}" th:value="${filter.view}">
+                <div class="col-sm-5 col-lg-4">
+                    <label class="form-label" for="teamId" th:text="#{team.team}"></label>
+                    <select class="form-select" th:field="*{teamId}">
+                        <option value="" th:text="#{common.allFem}"></option>
+                        <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-4 col-lg-3">
+                    <label class="form-label" for="status" th:text="#{match.status}"></label>
+                    <select class="form-select" th:field="*{status}">
+                        <option value="" th:text="#{common.allMasc}"></option>
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="#{${s.messageKey}}"></option>
+                    </select>
+                </div>
+                <div class="col-sm-3 col-lg-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-funnel"></i> <span th:text="#{common.filter}"></span></button>
+                    <a class="btn btn-outline-secondary" th:href="@{/matches}" th:title="#{common.reset}" th:aria-label="#{common.reset}"><i class="bi bi-x-lg"></i></a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:replace="~{fragments :: matchTable(${matches}, #{match.noResults})}"></div>
+    </section>
+</div>
+</body>
+</html>
