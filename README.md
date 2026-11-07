@@ -233,3 +233,196 @@ Detaljan opis modela podataka i odluka nalazi se u [docs/ANALIZA.md](docs/ANALIZ
 | `Cannot open database "NationalTeamManager"` | Pokrenite skriptu iz koraka 2, a zatim korak 3. |
 | `release version 21 not supported` | Maven ili Eclipse koriste stariju Javu. Podesite JDK 21 i `JAVA_HOME`. |
 | Port 8080 je zauzet | Promijenite `server.port` u `application.properties`. |
+
+# ⚽ National Team Manager
+
+**A web-based football management application built with Java 21 and Spring Boot.**
+
+National Team Manager is a web application designed to help users create, manage, and organize national football teams. It provides tools for managing players, stadiums, competitions, matches, lineups, tactics, and team statistics through an intuitive web interface.
+
+## 🚀 Features
+
+### National Team Management
+- Create, edit, and delete national teams.
+- Manage team information, coaches, and flags.
+- Organize players within each national team.
+
+### Player Management
+- Add, edit, and remove players.
+- Manage player information, positions, and shirt numbers.
+- Upload player photos.
+- Search and filter players.
+
+### Stadium Management
+- Create and manage stadiums.
+- Assign stadiums to national teams.
+- Set a main stadium for each team.
+
+### Competition Management
+- Create and manage competitions.
+- Organize official and custom competitions.
+- Upload competition logos.
+
+### Match Management
+- Schedule upcoming matches.
+- Record match results.
+- Track goals, assists, cards, and substitutions.
+- Manage match events and statistics.
+
+### Lineups and Tactics
+- Create starting lineups and substitute lists.
+- Choose formations and player positions.
+- Configure tactical settings.
+- Use an interactive tactical board.
+
+### Dashboard and Statistics
+- View team and player statistics.
+- Track match results and performance.
+- Access an overview of managed national teams.
+
+### Additional Features
+- User registration and authentication.
+- Serbian and English language support.
+- Secure password storage.
+- User-specific data isolation.
+- Responsive user interface.
+
+## 🛠️ Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| Java 21 | Main programming language |
+| Spring Boot 3.5.16 | Backend framework |
+| Spring Data JPA | Database access |
+| Hibernate | Object-relational mapping |
+| Microsoft SQL Server | Relational database |
+| Thymeleaf | Server-side HTML rendering |
+| Bootstrap 5.3.3 | Frontend styling |
+| Maven | Dependency and build management |
+| Spring Security | Authentication and authorization |
+| JUnit 5 | Testing |
+
+## 🏗️ Application Architecture
+
+The application follows a layered architecture:
+
+```text
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Hibernate / JPA
+    ↓
+Microsoft SQL Server
+```
+
+- **Controller Layer:** Handles HTTP requests and user interactions.
+- **Service Layer:** Contains business logic and application rules.
+- **Repository Layer:** Handles database operations.
+- **Entity Layer:** Represents database entities and relationships.
+- **View Layer:** Uses Thymeleaf templates and Bootstrap.
+
+## ⚙️ Requirements
+
+Before running the application, make sure you have installed:
+
+- Java Development Kit (JDK) 21
+- Microsoft SQL Server
+- Apache Maven (or use the included Maven Wrapper)
+- Git
+
+## 🔧 Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/national-team-manager.git
+```
+
+### 2. Navigate to the project directory
+
+```bash
+cd national-team-manager
+```
+
+### 3. Configure the database
+
+Create a database named:
+
+```text
+NationalTeamManager
+```
+
+Configure your database connection in:
+
+```text
+src/main/resources/application.properties
+```
+
+Set the appropriate database credentials using environment variables or a local configuration file.
+
+### 4. Run the application
+
+On Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+On Linux/macOS:
+
+```bash
+./mvnw spring-boot:run
+```
+
+### 5. Open the application
+
+Once the application starts, open:
+
+```text
+http://localhost:8080
+```
+
+## 🧪 Testing
+
+The project includes automated tests using:
+
+- JUnit 5
+- Spring Boot Test
+- MockMvc
+- Spring Security Test
+- H2 in-memory database for testing
+
+Run the tests using:
+
+```bash
+.\mvnw.cmd test
+```
+
+## 🔐 Security
+
+The application includes:
+
+- Spring Security authentication.
+- BCrypt password hashing.
+- CSRF protection.
+- User-specific resource access.
+- Validation of uploaded files.
+
+**Note:** Database credentials and other sensitive configuration values should never be committed to the repository.
+
+## 📸 Screenshots
+
+Screenshots of the application will be added here.
+
+## 👨‍💻 Author
+
+**Lazar Malbašić**
+
+Java & Spring Boot Developer
+
+---
+
+*National Team Manager — Manage your national team, players, matches, and tactics in one place.*
